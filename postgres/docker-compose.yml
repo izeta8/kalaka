@@ -13,6 +13,7 @@ services:
       POSTGRES_DB: kalaka
     volumes:
       - db-data:/var/lib/postgresql
+      - ./seed:/tmp/seed
     ports:
       - 5432:5432
 

@@ -1,0 +1,240 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict 5w54XGOhPypitOk3wHC36hyCwdfP7GYoK2oGS40OJB0SBtfjC33lF3HqIhIYTjd
+
+-- Dumped from database version 18.6 (Debian 18.6-1.pgdg13+2)
+-- Dumped by pg_dump version 18.6 (Debian 18.6-1.pgdg13+2)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Data for Name: towns; Type: TABLE DATA; Schema: public; Owner: izeta
+--
+
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (1, 'abaltzisketa', 'Abaltzisketa', 1, 8, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (2, 'aduna', 'Aduna', 1, 9, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (3, 'aia', 'Aia', 1, 10, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (4, 'aizarnazabal', 'Aizarnazabal', 1, 11, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (5, 'albiztur', 'Albiztur', 1, 12, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (6, 'alegia', 'Alegia', 1, 13, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (7, 'alkiza', 'Alkiza', 1, 14, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (8, 'altzaga', 'Altzaga', 1, 15, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (9, 'altzo', 'Altzo', 1, 16, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (10, 'amezketa', 'Amezketa', 1, 17, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (11, 'andoain', 'Andoain', 1, 18, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (12, 'anoeta', 'Anoeta', 1, 19, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (13, 'antzuola', 'Antzuola', 1, 20, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (14, 'arama', 'Arama', 1, 21, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (15, 'aretxabaleta', 'Aretxabaleta', 1, 22, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (16, 'arrasate', 'Arrasate', 1, 23, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (17, 'asteasu', 'Asteasu', 1, 24, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (18, 'astigarraga', 'Astigarraga', 1, 25, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (19, 'ataun', 'Ataun', 1, 26, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (20, 'azkoitia', 'Azkoitia', 1, 27, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (21, 'azpeitia', 'Azpeitia', 1, 28, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (22, 'baliarrain', 'Baliarrain', 1, 29, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (23, 'beasain', 'Beasain', 1, 30, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (24, 'beizama', 'Beizama', 1, 31, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (25, 'belauntza', 'Belauntza', 1, 32, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (26, 'berastegi', 'Berastegi', 1, 33, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (27, 'bergara', 'Bergara', 1, 34, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (28, 'berrobi', 'Berrobi', 1, 35, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (29, 'bidania-goiatz', 'Bidania-Goiatz', 1, 36, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (30, 'deba', 'Deba', 1, 37, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (31, 'donostia', 'Donostia', 1, 38, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (32, 'eibar', 'Eibar', 1, 39, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (33, 'elduain', 'Elduain', 1, 40, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (34, 'elgeta', 'Elgeta', 1, 41, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (35, 'elgoibar', 'Elgoibar', 1, 42, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (36, 'errenteria', 'Errenteria', 1, 43, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (37, 'errezil', 'Errezil', 1, 44, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (38, 'eskoriatza', 'Eskoriatza', 1, 45, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (39, 'ezkio-itsaso', 'Ezkio-Itsaso', 1, 46, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (40, 'gabiria', 'Gabiria', 1, 47, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (41, 'gaintza', 'Gaintza', 1, 48, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (42, 'gaztelu', 'Gaztelu', 1, 49, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (43, 'getaria', 'Getaria', 1, 50, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (44, 'hernani', 'Hernani', 1, 51, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (45, 'hernialde', 'Hernialde', 1, 52, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (46, 'hondarribia', 'Hondarribia', 1, 53, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (47, 'ibarra', 'Ibarra', 1, 54, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (48, 'idiazabal', 'Idiazabal', 1, 55, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (49, 'ikaztegieta', 'Ikaztegieta', 1, 56, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (50, 'irun', 'Irun', 1, 57, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (51, 'irura', 'Irura', 1, 58, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (52, 'itsasondo', 'Itsasondo', 1, 59, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (53, 'larraul', 'Larraul', 1, 60, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (54, 'lasarte-oria', 'Lasarte-Oria', 1, 61, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (55, 'lazkao', 'Lazkao', 1, 62, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (56, 'leaburu', 'Leaburu', 1, 63, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (57, 'legazpi', 'Legazpi', 1, 64, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (58, 'legorreta', 'Legorreta', 1, 65, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (59, 'leintz-gatzaga', 'Leintz-Gatzaga', 1, 66, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (60, 'lezo', 'Lezo', 1, 67, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (61, 'lizartza', 'Lizartza', 1, 68, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (62, 'mendaro', 'Mendaro', 1, 69, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (63, 'mutiloa', 'Mutiloa', 1, 70, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (64, 'mutriku', 'Mutriku', 1, 71, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (65, 'oiartzun', 'Oiartzun', 1, 72, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (66, 'olaberria', 'Olaberria', 1, 73, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (67, 'onati', 'Oñati', 1, 74, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (68, 'ordizia', 'Ordizia', 1, 75, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (69, 'orendain', 'Orendain', 1, 76, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (70, 'orexa', 'Orexa', 1, 77, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (71, 'orio', 'Orio', 1, 78, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (72, 'ormaiztegi', 'Ormaiztegi', 1, 79, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (73, 'pasaia', 'Pasaia', 1, 80, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (74, 'segura', 'Segura', 1, 81, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (75, 'soraluze', 'Soraluze', 1, 82, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (76, 'tolosa', 'Tolosa', 1, 83, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (77, 'urnieta', 'Urnieta', 1, 84, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (78, 'urretxu', 'Urretxu', 1, 85, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (79, 'usurbil', 'Usurbil', 1, 86, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (80, 'villabona', 'Villabona', 1, 87, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (81, 'zaldibia', 'Zaldibia', 1, 88, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (82, 'zarautz', 'Zarautz', 1, 89, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (83, 'zegama', 'Zegama', 1, 90, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (84, 'zerain', 'Zerain', 1, 91, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (85, 'zestoa', 'Zestoa', 1, 92, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (86, 'zizurkil', 'Zizurkil', 1, 93, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (87, 'zumaia', 'Zumaia', 1, 94, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (88, 'zumarraga', 'Zumarraga', 1, 95, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (89, 'abadino', 'Abadiño', 2, 96, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (90, 'abanto-zierbena', 'Abanto-Zierbena', 2, 97, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (91, 'ajangiz', 'Ajangiz', 2, 98, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (92, 'alonsotegi', 'Alonsotegi', 2, 99, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (93, 'amorebieta-etxano', 'Amorebieta-Etxano', 2, 100, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (94, 'amoroto', 'Amoroto', 2, 101, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (95, 'arakaldo', 'Arakaldo', 2, 102, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (96, 'arantzazu', 'Arantzazu', 2, 103, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (97, 'areatza', 'Areatza', 2, 104, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (98, 'arrankudiaga', 'Arrankudiaga', 2, 105, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (99, 'arratzu', 'Arratzu', 2, 106, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (100, 'arrieta', 'Arrieta', 2, 107, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (101, 'arrigorriaga', 'Arrigorriaga', 2, 108, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (102, 'artea', 'Artea', 2, 109, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (103, 'artzentales', 'Artzentales', 2, 110, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (104, 'atxondo', 'Atxondo', 2, 111, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (105, 'aulesti', 'Aulesti', 2, 112, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (106, 'bakio', 'Bakio', 2, 113, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (107, 'balmaseda', 'Balmaseda', 2, 114, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (108, 'barakaldo', 'Barakaldo', 2, 115, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (109, 'barrika', 'Barrika', 2, 116, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (110, 'basauri', 'Basauri', 2, 117, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (111, 'bedia', 'Bedia', 2, 118, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (112, 'berango', 'Berango', 2, 119, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (113, 'bermeo', 'Bermeo', 2, 120, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (114, 'berriatua', 'Berriatua', 2, 121, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (115, 'berriz', 'Berriz', 2, 122, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (116, 'bilbo', 'Bilbo', 2, 123, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (117, 'busturia', 'Busturia', 2, 124, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (118, 'derio', 'Derio', 2, 125, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (119, 'dima', 'Dima', 2, 126, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (120, 'durango', 'Durango', 2, 127, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (121, 'ea', 'Ea', 2, 128, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (122, 'elantxobe', 'Elantxobe', 2, 129, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (123, 'elorrio', 'Elorrio', 2, 130, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (124, 'erandio', 'Erandio', 2, 131, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (125, 'ereno', 'Ereño', 2, 132, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (126, 'ermua', 'Ermua', 2, 133, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (127, 'errigoiti', 'Errigoiti', 2, 134, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (128, 'etxebarri', 'Etxebarri', 2, 135, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (129, 'etxebarria', 'Etxebarria', 2, 136, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (130, 'forua', 'Forua', 2, 137, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (131, 'fruiz', 'Fruiz', 2, 138, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (132, 'galdakao', 'Galdakao', 2, 139, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (133, 'galdames', 'Galdames', 2, 140, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (134, 'gamiz-fika', 'Gamiz-Fika', 2, 141, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (135, 'garai', 'Garai', 2, 142, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (136, 'gatika', 'Gatika', 2, 143, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (137, 'gautegiz-arteaga', 'Gautegiz Arteaga', 2, 144, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (138, 'gernika-lumo', 'Gernika-Lumo', 2, 145, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (139, 'getxo', 'Getxo', 2, 146, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (140, 'gizaburuaga', 'Gizaburuaga', 2, 147, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (141, 'gordexola', 'Gordexola', 2, 148, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (142, 'gorliz', 'Gorliz', 2, 149, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (143, 'guenes', 'Gueñes', 2, 150, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (144, 'ibarrangelu', 'Ibarrangelu', 2, 151, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (145, 'igorre', 'Igorre', 2, 152, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (146, 'ispaster', 'Ispaster', 2, 153, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (147, 'iurreta', 'Iurreta', 2, 154, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (148, 'izurtza', 'Izurtza', 2, 155, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (149, 'karrantza-harana', 'Karrantza Harana', 2, 156, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (150, 'kortezubi', 'Kortezubi', 2, 157, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (151, 'lanestosa', 'Lanestosa', 2, 158, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (152, 'larrabetzu', 'Larrabetzu', 2, 159, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (153, 'laukiz', 'Laukiz', 2, 160, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (154, 'leioa', 'Leioa', 2, 161, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (155, 'lekeitio', 'Lekeitio', 2, 162, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (156, 'lemoa', 'Lemoa', 2, 163, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (157, 'lemoiz', 'Lemoiz', 2, 164, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (158, 'lezama', 'Lezama', 2, 165, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (159, 'loiu', 'Loiu', 2, 166, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (160, 'mallabia', 'Mallabia', 2, 167, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (161, 'manaria', 'Mañaria', 2, 168, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (162, 'markina-xemein', 'Markina-Xemein', 2, 169, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (163, 'maruri-jatabe', 'Maruri-Jatabe', 2, 170, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (164, 'mendata', 'Mendata', 2, 171, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (165, 'mendexa', 'Mendexa', 2, 172, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (166, 'menaka', 'Meñaka', 2, 173, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (167, 'morga', 'Morga', 2, 174, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (168, 'mundaka', 'Mundaka', 2, 175, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (169, 'mungia', 'Mungia', 2, 176, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (170, 'munitibar-arbatzegi-gerrikaitz', 'Munitibar-Arbatzegi Gerrikaitz', 2, 177, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (171, 'murueta', 'Murueta', 2, 178, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (172, 'muskiz', 'Muskiz', 2, 179, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (173, 'muxika', 'Muxika', 2, 180, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (174, 'nabarniz', 'Nabarniz', 2, 181, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (175, 'ondarroa', 'Ondarroa', 2, 182, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (176, 'orozko', 'Orozko', 2, 183, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (177, 'ortuella', 'Ortuella', 2, 184, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (178, 'otxandio', 'Otxandio', 2, 185, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (179, 'plentzia', 'Plentzia', 2, 186, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (180, 'portugalete', 'Portugalete', 2, 187, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (181, 'santurtzi', 'Santurtzi', 2, 188, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (182, 'sestao', 'Sestao', 2, 189, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (183, 'sondika', 'Sondika', 2, 190, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (184, 'sopela', 'Sopela', 2, 191, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (185, 'sopuerta', 'Sopuerta', 2, 192, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (186, 'sukarrieta', 'Sukarrieta', 2, 193, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (187, 'trapagaran', 'Trapagaran', 2, 194, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (188, 'turtzioz', 'Turtzioz', 2, 195, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (189, 'ubide', 'Ubide', 2, 196, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (190, 'ugao-miraballes', 'Ugao-Miraballes', 2, 197, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (191, 'urduliz', 'Urduliz', 2, 198, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (192, 'urduna', 'Urduña', 2, 199, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (193, 'zaldibar', 'Zaldibar', 2, 200, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (194, 'zalla', 'Zalla', 2, 201, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (195, 'zamudio', 'Zamudio', 2, 202, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (196, 'zaratamo', 'Zaratamo', 2, 203, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (197, 'zeanuri', 'Zeanuri', 2, 204, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (198, 'zeberio', 'Zeberio', 2, 205, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (199, 'zierbena', 'Zierbena', 2, 206, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+INSERT INTO public.towns (id, slug, name, province_id, room_id, created_at, updated_at) OVERRIDING SYSTEM VALUE VALUES (200, 'ziortza-bolibar', 'Ziortza-Bolibar', 2, 207, '2026-09-28 08:42:26.131972+00', '2026-09-28 08:42:26.131972+00');
+
+
+--
+-- Name: towns_id_seq; Type: SEQUENCE SET; Schema: public; Owner: izeta
+--
+
+SELECT pg_catalog.setval('public.towns_id_seq', 200, true);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict 5w54XGOhPypitOk3wHC36hyCwdfP7GYoK2oGS40OJB0SBtfjC33lF3HqIhIYTjd
+
