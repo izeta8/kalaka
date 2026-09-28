@@ -2,16 +2,17 @@
 services:
 
   db:
+    container_name: postgres
     image: postgres:18
     restart: always
     # set shared memory limit when using docker compose
     shm_size: 128mb
     environment:
       POSTGRES_USER: izeta
-      POSTGRES_PASSWORD: izeta
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: kalaka
     volumes:
-      - db-data:/var/lib/postgresql/18/docker
+      - db-data:/var/lib/postgresql
     ports:
       - 5432:5432
 
