@@ -92,7 +92,7 @@ EXECUTE FUNCTION renew_updated_at();
 
 CREATE TABLE auth_accounts (
     id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    user_id BIGINT NOT NULL UNIQUE references users ON DELETE CASCADE,
+    user_id BIGINT NOT NULL references users ON DELETE CASCADE,
     provider TEXT NOT NULL, -- 'google', 'password', ...
     provider_user_id TEXT,
     password_hash TEXT,
@@ -100,7 +100,7 @@ CREATE TABLE auth_accounts (
     updated_at timestamptz NOT NULL DEFAULT now(),
 
     CONSTRAINT auths_accounts_unique_provider_user_id UNIQUE (provider, provider_user_id), -- avoid linking the same account to different users
-    CONSTRAINT auths_accounts_provider_lowercase CHECK (provider = LOWER(provider)),
+    CONSTRAINT auths_accounts_unique_user_provider UNIQUE (user_id, provider),
     CONSTRAINT auths_accounts_providers_check CHECK (provider IN ('google', 'password')),
     CONSTRAINT auth_accounts_data_consistency CHECK (
         (
