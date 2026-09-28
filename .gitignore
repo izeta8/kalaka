@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Compiled and caches
+dist/
+build/
+*.tsbuildinfo
+.cache/
+coverage/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# System and IDE
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
