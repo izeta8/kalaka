@@ -5,7 +5,7 @@ export const app: Express = express()
 
 app.get("/health", async (_req: Request, res: Response) => {
   try {
-    const queryString = "SELECT id FROM towns LIMIT 1"
+    const queryString = "SELECT 1"
     await database.query(queryString)
     res.status(200).send({ status: "ok" })
     return
