@@ -1,8 +1,9 @@
 import type { Server } from "node:http"
 import { app } from "./app.ts"
+import { env } from "./config/config.ts"
 import { pool } from "./database/database.ts"
 
-const port = 3000
+const port = env.PORT
 
 // Create the server and listen to connections
 const server: Server = app.listen(port, async () => {
