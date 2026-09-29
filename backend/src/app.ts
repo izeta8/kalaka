@@ -53,7 +53,7 @@ app.get("/provinces/:provinceSlug/towns", async (req: Request, res: Response) =>
   // Check the requested province's towns.
   const query = {
     text: `
-      SELECT t.slug, t.name, t.room_id
+      SELECT t.slug, t.name
       FROM provinces p
       LEFT JOIN towns t
       ON p.id = t.province_id
@@ -61,10 +61,10 @@ app.get("/provinces/:provinceSlug/towns", async (req: Request, res: Response) =>
     values: [provinceSlug],
   }
 
-  type TownBasic = Pick<Town, "slug" | "name" | "room_id">
+  type TownBasic = Pick<Town, "slug" | "name">
 
   const dbResponse = await pool.query<TownBasic>(query)
-  const towns = dbResponse.rows
+  const towns = dbResponse.rows.sort((a, b) => a.slug.localeCompare(b.slug))
 
   // If the array is empty means that the province doesn't exist.
   if (towns.length === 0) {
