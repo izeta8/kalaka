@@ -1,4 +1,4 @@
-import * as database from "../database/query.ts"
+import * as database from "../../shared/database/query.ts"
 import type { TownBasic } from "./towns.types.ts"
 
 export const getTowns = async (provinceSlug: string): Promise<TownBasic[]> => {

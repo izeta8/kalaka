@@ -1,6 +1,6 @@
 import express, { type Express, type NextFunction, type Request, type Response } from "express"
-import * as database from "./database/query.ts"
-import { provincesRouter } from "./provinces/provinces.routes.ts"
+import { provincesRouter } from "./modules/provinces/provinces.routes.ts"
+import * as database from "./shared/database/query.ts"
 export const app: Express = express()
 
 app.get("/health", async (_req: Request, res: Response) => {

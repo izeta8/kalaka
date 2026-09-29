@@ -2,7 +2,7 @@ import assert from "node:assert/strict"
 import { after, describe, it } from "node:test"
 import request from "supertest"
 import { app } from "../../app.ts"
-import { pool } from "../../database/database.ts"
+import { pool } from "../../shared/database/database.ts"
 import { bizkaiaTowns, gipuzkoaTowns } from "../fixtures/towns.ts"
 
 // Without this the process of tests never ends

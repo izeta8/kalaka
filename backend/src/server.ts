@@ -1,7 +1,7 @@
 import type { Server } from "node:http"
 import { app } from "./app.ts"
-import { env } from "./config/config.ts"
-import { pool } from "./database/database.ts"
+import { env } from "./shared/config/config.ts"
+import { pool } from "./shared/database/database.ts"
 
 const port = env.PORT
 
