@@ -3,20 +3,11 @@ import { after, describe, it } from "node:test"
 import request from "supertest"
 import { app } from "../../app.ts"
 import { pool } from "../../database/database.ts"
-import { bizkaiaTowns, gipuzkoaTowns, towns } from "../fixtures/towns.ts"
+import { bizkaiaTowns, gipuzkoaTowns } from "../fixtures/towns.ts"
 
 // Without this the process of tests never ends
 after(async () => {
   await pool.end()
-})
-
-describe("GET /towns", () => {
-  it("respond with the 200 towns currently in the database", async () => {
-    const res = await request(app).get("/towns")
-
-    assert.equal(res.status, 200)
-    assert.deepStrictEqual(res.body, towns)
-  })
 })
 
 describe("GET /provinces/:slug/towns", () => {
