@@ -5,10 +5,6 @@ import type { Province, Town } from "./types/tables.ts"
 
 export const app: Express = express()
 
-app.get("/", (_: Request, res: Response) => {
-  res.send("Hello keloke ss!")
-})
-
 app.get("/health", async (_req: Request, res: Response) => {
   try {
     const query = {
