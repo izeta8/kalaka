@@ -52,7 +52,7 @@ CREATE TABLE towns (
 
     CONSTRAINT towns_slug_prevent_reserved_word CHECK (slug != 'posts'),
     CONSTRAINT towns_unique_slug_plus_province_id UNIQUE (slug, province_id), -- there can't be two towns in the same province. checking the slug is enough, as the slug and name must reference the same.
-    CONSTRAINT towns_slug_format CHECK (slug ~ '^[a-z0-9-]+$')
+    CONSTRAINT towns_slug_format CHECK (slug ~ '^[a-z-]+$')
 
 );
 
