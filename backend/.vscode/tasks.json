@@ -1,0 +1,59 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "typecheck: watch",
+      "type": "shell",
+      "command": "npx tsc --watch --pretty false",
+      "isBackground": true,
+      "problemMatcher": "$tsc-watch",
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated",
+        "group": "watchers",
+        "showReuseMessage": false,
+        "clear": true
+      }
+    },
+    {
+      "label": "lint: watch",
+      "type": "shell",
+      "command": "node --watch-path=src --watch-preserve-output node_modules/@biomejs/biome/bin/biome lint --reporter=github src",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated",
+        "group": "watchers",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "problemMatcher": {
+        "owner": "biome-cli",
+        "source": "biome (project)",
+        "fileLocation": "absolute",
+        "pattern": {
+          "regexp": "^::(error|warning|notice) title=([^,]*),file=([^,]*),line=(\\d+),endLine=(\\d+),col=(\\d+),endColumn=(\\d+)::(.*)$",
+          "severity": 1,
+          "code": 2,
+          "file": 3,
+          "line": 4,
+          "endLine": 5,
+          "column": 6,
+          "endColumn": 7,
+          "message": 8
+        },
+        "background": {
+          "activeBegin": true,
+          "beginsPattern": "^(Change detected|Restarting) ",
+          "endsPattern": "^(Completed|Failed) running "
+        }
+      }
+    }
+  ]
+}
