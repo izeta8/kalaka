@@ -33,7 +33,7 @@ app.get("/provinces", async (_: Request, res: Response) => {
   const provinces = dbResponse.rows.sort((a, b) => a.id - b.id)
 
   // We have fetched with the id so we can sort it. But we don't want to respond with the id.
-  const responseProvinces = provinces.map((province) => ({ name: province.name, slug: province.slug }))
+  const responseProvinces = provinces.map((province) => ({ slug: province.slug, name: province.name }))
 
   res.status(200).send(responseProvinces)
 })
