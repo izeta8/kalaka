@@ -1,16 +1,13 @@
 import express, { type Express, type NextFunction, type Request, type Response } from "express"
 import z from "zod"
-import { pool } from "./database/database.ts"
-import type { Province, Town } from "./types/tables.ts"
-
+import * as database from "./database/query.ts"
+import type { Town } from "./types/tables.ts"
 export const app: Express = express()
 
 app.get("/health", async (_req: Request, res: Response) => {
   try {
-    const query = {
-      text: `SELECT id FROM towns LIMIT 1`,
-    }
-    await pool.query(query)
+    const queryString = "SELECT id FROM towns LIMIT 1"
+    await database.query(queryString)
     res.status(200).send({ status: "ok" })
     return
   } catch (error) {
@@ -18,24 +15,6 @@ app.get("/health", async (_req: Request, res: Response) => {
     res.status(503).send({ status: "error" })
     return
   }
-})
-
-app.get("/provinces", async (_: Request, res: Response) => {
-  const query = {
-    text: `
-    SELECT id, slug, name
-    FROM provinces
-    ORDER BY room_id`,
-  }
-  type ProvinceBasic = Pick<Province, "id" | "slug" | "name">
-
-  const dbResponse = await pool.query<ProvinceBasic>(query)
-  const provinces = dbResponse.rows.sort((a, b) => a.id - b.id)
-
-  // We have fetched with the id so we can sort it. But we don't want to respond with the id.
-  const responseProvinces = provinces.map((province) => ({ slug: province.slug, name: province.name }))
-
-  res.status(200).send(responseProvinces)
 })
 
 app.get("/provinces/:provinceSlug/towns", async (req: Request, res: Response) => {
@@ -51,20 +30,17 @@ app.get("/provinces/:provinceSlug/towns", async (req: Request, res: Response) =>
   }
 
   // Check the requested province's towns.
-  const query = {
-    text: `
+  const queryString = `
       SELECT t.slug, t.name
       FROM provinces p
       LEFT JOIN towns t
       ON p.id = t.province_id
-      WHERE p.slug = $1::text`,
-    values: [provinceSlug],
-  }
+      WHERE p.slug = $1::text`
 
   type TownBasic = Pick<Town, "slug" | "name">
 
-  const dbResponse = await pool.query<TownBasic>(query)
-  const towns = dbResponse.rows.sort((a, b) => a.slug.localeCompare(b.slug))
+  const dbResponse = await database.query<TownBasic>(queryString, [provinceSlug])
+  const towns = dbResponse.sort((a, b) => a.slug.localeCompare(b.slug))
 
   // If the array is empty means that the province doesn't exist.
   if (towns.length === 0) {
@@ -84,17 +60,15 @@ app.get("/provinces/:provinceSlug/towns", async (req: Request, res: Response) =>
 // For now makes no sense to have a /towns endpoint, but we will keep it for educational purposes.
 // When more endpoints are created we will get rid of this.
 app.get("/towns", async (_req: Request, res: Response) => {
-  const query = {
-    text: `
+  const queryString = `
     SELECT t.slug, t.name, p.slug as "province_slug"
     FROM towns t
     INNER JOIN provinces p
-    ON t.province_id = p.id`,
-  }
+    ON t.province_id = p.id`
 
   type TownResponse = Pick<Town, "slug" | "name"> & { province_slug: string }
-  const dbResponse = await pool.query<TownResponse>(query)
-  const towns: TownResponse[] = dbResponse.rows.sort((a, b) => a.name.localeCompare(b.name))
+  const dbResult = await database.query<TownResponse>(queryString)
+  const towns: TownResponse[] = dbResult.sort((a, b) => a.name.localeCompare(b.name))
 
   res.status(200).send(towns)
 })
