@@ -7,7 +7,8 @@ export const getTowns = async (provinceSlug: string): Promise<TownBasic[]> => {
       FROM provinces p
       LEFT JOIN towns t
       ON p.id = t.province_id
-      WHERE p.slug = $1::text`
+      WHERE p.slug = $1::text
+      ORDER BY t.slug`
 
   return await database.query<TownBasic>(queryString, [provinceSlug])
 }
