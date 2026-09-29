@@ -47,7 +47,7 @@ app.get("/provinces/:provinceSlug/towns", async (req: Request, res: Response) =>
   // Validate route parameter. If it is invalid an error 400 will be thrown.
   const safeParse = SlugSchema.safeParse(provinceSlug)
   if (!safeParse.success) {
-    res.status(400).send(`the slug must be a valid province name slug`)
+    res.status(400).send({ error: "the slug must be a valid province name slug" })
     return
   }
 
@@ -69,7 +69,7 @@ app.get("/provinces/:provinceSlug/towns", async (req: Request, res: Response) =>
 
   // If the array is empty means that the province doesn't exist.
   if (towns.length === 0) {
-    res.status(404).send(`there is no such town '${provinceSlug}'`)
+    res.status(404).send({ error: `there is no such province '${provinceSlug}'` })
     return
   }
 
@@ -97,7 +97,7 @@ app.get("/towns", async (_req: Request, res: Response) => {
 })
 
 app.use((_req: Request, res: Response, _next: NextFunction) => {
-  res.status(404).send("Sorry can't find that!")
+  res.status(404).send({ error: "sorry, can't find that!" })
 })
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
