@@ -16,9 +16,11 @@ app.get("/health", async (_req: Request, res: Response) => {
     }
     await pool.query(query)
     res.status(200).send({ status: "ok" })
+    return
   } catch (error) {
     console.error(error)
     res.status(503).send({ status: "error" })
+    return
   }
 })
 
@@ -46,6 +48,7 @@ app.get("/provinces/:provinceSlug/towns", async (req: Request, res: Response) =>
   const safeParse = SlugSchema.safeParse(provinceSlug)
   if (!safeParse.success) {
     res.status(400).send(`the slug must be a valid province name slug`)
+    return
   }
 
   // Check the requested province's towns.
@@ -67,11 +70,13 @@ app.get("/provinces/:provinceSlug/towns", async (req: Request, res: Response) =>
   // If the array is empty means that the province doesn't exist.
   if (towns.length === 0) {
     res.status(404).send(`there is no such town '${provinceSlug}'`)
+    return
   }
 
   // If the province is valid but there is no town, respond a empty array.
   if (towns.length === 1 && towns[0].slug === null) {
     res.status(200).send([])
+    return
   }
 
   res.status(200).send(towns)
