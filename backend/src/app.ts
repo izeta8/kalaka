@@ -81,16 +81,20 @@ app.get("/provinces/:provinceSlug/towns", async (req: Request, res: Response) =>
   res.status(200).send(towns)
 })
 
+// For now makes no sense to have a /towns endpoint, but we will keep it for educational purposes.
+// When more endpoints are created we will get rid of this.
 app.get("/towns", async (_req: Request, res: Response) => {
   const query = {
     text: `
-    SELECT t.slug, t.name, t.room_id, t.province_id
-    FROM towns t`,
+    SELECT t.slug, t.name, p.slug as "province_slug"
+    FROM towns t
+    INNER JOIN provinces p
+    ON t.province_id = p.id`,
   }
 
-  type TownResponse = Pick<Town, "slug" | "name" | "room_id" | "province_id">
+  type TownResponse = Pick<Town, "slug" | "name"> & { province_slug: string }
   const dbResponse = await pool.query<TownResponse>(query)
-  const towns: TownResponse[] = dbResponse.rows
+  const towns: TownResponse[] = dbResponse.rows.sort((a, b) => a.name.localeCompare(b.name))
 
   res.status(200).send(towns)
 })
