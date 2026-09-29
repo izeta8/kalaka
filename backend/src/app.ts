@@ -23,16 +23,19 @@ app.get("/health", async (_req: Request, res: Response) => {
 app.get("/provinces", async (_: Request, res: Response) => {
   const query = {
     text: `
-    SELECT slug, name
+    SELECT id, slug, name
     FROM provinces
     ORDER BY room_id`,
   }
-  type ProvinceBasic = Pick<Province, "slug" | "name">
+  type ProvinceBasic = Pick<Province, "id" | "slug" | "name">
 
   const dbResponse = await pool.query<ProvinceBasic>(query)
-  const provinces = dbResponse.rows
+  const provinces = dbResponse.rows.sort((a, b) => a.id - b.id)
 
-  res.status(200).send(provinces)
+  // We have fetched with the id so we can sort it. But we don't want to respond with the id.
+  const responseProvinces = provinces.map((province) => ({ name: province.name, slug: province.slug }))
+
+  res.status(200).send(responseProvinces)
 })
 
 app.get("/provinces/:provinceSlug/towns", async (req: Request, res: Response) => {
