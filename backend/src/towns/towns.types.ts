@@ -1,4 +1,16 @@
+import type { Province } from "../provinces/provinces.types.ts"
+
 export interface Town {
+  id: number
+  slug: string
+  name: string
+  province: Province
+  room_id: number
+  created_at: Date
+  updated_at: Date
+}
+
+export interface TownDB {
   id: number
   slug: string
   name: string
@@ -8,13 +20,4 @@ export interface Town {
   updated_at: Date
 }
 
-export interface Province {
-  id: number
-  slug: string
-  name: string
-  room_id: number
-  created_at: Date
-  updated_at: Date
-}
-
-export * from "./tables.ts"
+export type TownBasic = Pick<Town, "slug" | "name">
