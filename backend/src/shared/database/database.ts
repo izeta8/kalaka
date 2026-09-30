@@ -22,6 +22,6 @@ export const pool = new Pool({
 })
 
 // The server would close if we didn't catch errors.
-pool.on("error", (err, client) => {
-  console.log(`There was an error with client ${client}: ${err}`)
+pool.on("error", (err) => {
+  console.log(`there was an error in the database: ${err.stack}`)
 })
