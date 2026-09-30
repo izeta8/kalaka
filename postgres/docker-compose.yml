@@ -13,7 +13,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DATABASE}
     volumes:
       - db-data:/var/lib/postgresql
-      - ./seed:/tmp/seed
+      - ./initdb:/docker-entrypoint-initdb.d/
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
 
