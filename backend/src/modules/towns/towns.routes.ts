@@ -24,7 +24,7 @@ townsRouter.get("/", async (req: Request, res: Response) => {
   }
 
   // If the province is valid but there is no town, respond a empty array.
-  if (towns.length === 1 && towns[0].slug === null) {
+  if (towns.length === 1 && towns[0].slug == null) {
     res.status(200).send([])
     return
   }
