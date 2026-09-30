@@ -8,14 +8,14 @@ services:
     # set shared memory limit when using docker compose
     shm_size: 128mb
     environment:
-      POSTGRES_USER: izeta
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: kalaka
+      POSTGRES_DB: ${POSTGRES_DATABASE}
     volumes:
       - db-data:/var/lib/postgresql
       - ./seed:/tmp/seed
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
 
 
   # adminer:
