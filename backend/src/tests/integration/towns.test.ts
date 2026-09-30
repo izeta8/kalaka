@@ -32,14 +32,14 @@ describe("GET /provinces/:slug/towns", () => {
     assert.deepStrictEqual(res.body, [])
   })
 
-  it("invalid province slug responds with error 400", async () => {
+  it("invalid province slug (underscore) responds with error 400", async () => {
     const res = await request(app).get("/provinces/invalid_slug/towns")
 
     assert.equal(res.status, 400)
     assert.deepStrictEqual(res.body, { error: "the slug must be a valid province name slug" })
   })
 
-  it("invalid province slug responds with error 400", async () => {
+  it("invalid province slug (number) responds with error 400", async () => {
     const res = await request(app).get("/provinces/bizkaia0/towns")
 
     assert.equal(res.status, 400)
