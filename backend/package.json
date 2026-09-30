@@ -5,7 +5,7 @@
   "license": "ISC",
   "author": "",
   "type": "module",
-  "main": "server.ts",
+  "main": "src/server.ts",
   "scripts": {
     "dev": "node --env-file=.env --watch src/server.ts ",
     "test": "node --env-file=.env.test --test 'src/**/*.test.ts'",
