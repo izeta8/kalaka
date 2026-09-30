@@ -14,6 +14,7 @@ describe("GET /provinces", () => {
   it("respond with the 7 provinces of the basque country", async () => {
     const res = await request(app).get("/provinces")
     assert.equal(res.status, 200)
+    assert.deepStrictEqual(res.body.length, 7)
     assert.deepStrictEqual(res.body, provinces)
   })
 })

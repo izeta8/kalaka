@@ -15,6 +15,7 @@ describe("GET /provinces/:slug/towns", () => {
     const res = await request(app).get("/provinces/gipuzkoa/towns")
 
     assert.equal(res.status, 200)
+    assert.deepStrictEqual(res.body.length, 88)
     assert.deepStrictEqual(res.body, gipuzkoaTowns)
   })
 
@@ -22,6 +23,7 @@ describe("GET /provinces/:slug/towns", () => {
     const res = await request(app).get("/provinces/bizkaia/towns")
 
     assert.equal(res.status, 200)
+    assert.deepStrictEqual(res.body.length, 112)
     assert.deepStrictEqual(res.body, bizkaiaTowns)
   })
 
@@ -29,6 +31,7 @@ describe("GET /provinces/:slug/towns", () => {
     const res = await request(app).get("/provinces/araba/towns")
 
     assert.equal(res.status, 200)
+    assert.deepStrictEqual(res.body.length, 0)
     assert.deepStrictEqual(res.body, [])
   })
 
