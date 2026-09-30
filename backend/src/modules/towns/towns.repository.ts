@@ -1,14 +1,12 @@
 import * as database from "../../shared/database/query.ts"
-import type { TownBasic } from "./towns.types.ts"
+import type { TownRow } from "./towns.types.ts"
 
-export const getTowns = async (provinceSlug: string): Promise<TownBasic[]> => {
+export const findTownsOfProvince = async (provinceId: number): Promise<TownRow[]> => {
   const queryString = `
-      SELECT t.slug, t.name
-      FROM provinces p
-      LEFT JOIN towns t
-      ON p.id = t.province_id
-      WHERE p.slug = $1::text
-      ORDER BY t.slug`
+        SELECT *
+        FROM towns
+        WHERE province_id = $1
+        ORDER BY slug`
 
-  return await database.query<TownBasic>(queryString, [provinceSlug])
+  return await database.query<TownRow>(queryString, [provinceId])
 }

@@ -1,6 +1,6 @@
 import { type Request, type Response, Router } from "express"
 import { z } from "zod"
-import { getTowns } from "./towns.repository.ts"
+import { getTownsByProvinceSlug } from "./towns.service.ts"
 
 export const townsRouter = Router({ mergeParams: true })
 
@@ -15,17 +15,10 @@ townsRouter.get("/", async (req: Request, res: Response) => {
   }
 
   const provinceSlug = parsed.data
-  const towns = await getTowns(provinceSlug)
+  const towns = await getTownsByProvinceSlug(provinceSlug)
 
-  // If the array is empty means that the province doesn't exist.
-  if (towns.length === 0) {
+  if (towns === null) {
     res.status(404).send({ error: `there is no such province '${provinceSlug}'` })
-    return
-  }
-
-  // If the province is valid but there is no town, respond a empty array.
-  if (towns.length === 1 && towns[0].slug == null) {
-    res.status(200).send([])
     return
   }
 
