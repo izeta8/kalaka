@@ -16,8 +16,7 @@ services:
       - db-data:/var/lib/postgresql
       - ./initdb:/docker-entrypoint-initdb.d/
     ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
-
+      - ${POSTGRES_PORT}:5432
 
   # adminer:
   #   image: adminer
