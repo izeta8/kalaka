@@ -1,4 +1,4 @@
-export interface Province {
+export interface ProvinceRow {
   id: number
   slug: string
   name: string
@@ -7,4 +7,4 @@ export interface Province {
   updatedAt: Date
 }
 
-export type ProvinceBasic = Pick<Province, "slug" | "name">
+export type ProvinceBasic = Pick<ProvinceRow, "slug" | "name">
