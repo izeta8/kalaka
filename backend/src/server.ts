@@ -7,7 +7,7 @@ const port = env.PORT
 
 // Create the server and listen to connections
 const server: Server = app.listen(port, async () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`kalaka backend running in port ${port}`)
 })
 
 // Listen for termination signals
@@ -31,7 +31,7 @@ function gracefulShutdown(signal: NodeJS.Signals) {
       await pool.end()
       console.log("Database connections closed.")
 
-      // 4. Exit successfully
+      // Exit successfully
       process.exit(0)
     } catch (cleanupError) {
       console.error("Error during cleanup:", cleanupError)
