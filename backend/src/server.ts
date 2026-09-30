@@ -6,7 +6,7 @@ import { pool } from "./shared/database/database.ts"
 const port = env.PORT
 
 // Create the server and listen to connections
-const server: Server = app.listen(port, async () => {
+const server: Server = app.listen(port, () => {
   console.log(`kalaka backend running in port ${port}`)
 })
 
