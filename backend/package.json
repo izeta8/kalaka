@@ -8,9 +8,11 @@
   "main": "src/server.ts",
   "scripts": {
     "dev": "node --env-file=.env --watch src/server.ts ",
+    "pretest": "npm run db:test:reset",
     "test": "node --env-file=.env.test --test 'src/**/*.test.ts'",
     "lint": "biome check src",
-    "lint:fix": "biome check --write src"
+    "lint:fix": "biome check --write src",
+    "db:test:reset": "docker exec postgres /docker-entrypoint-initdb.d/99-test-db.sh"
   },
   "dependencies": {
     "express": "^5.2.1",
