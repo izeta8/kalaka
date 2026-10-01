@@ -7,4 +7,4 @@ export interface ProvinceRow {
   updatedAt: Date
 }
 
-export type ProvinceBasic = Pick<ProvinceRow, "slug" | "name">
+export type ProvincePublic = Pick<ProvinceRow, "slug" | "name">

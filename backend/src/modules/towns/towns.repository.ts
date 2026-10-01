@@ -10,3 +10,12 @@ export const findTownsOfProvince = async (provinceId: number): Promise<TownRow[]
 
   return await database.query<TownRow>(queryString, [provinceId])
 }
+
+export const findTown = async (slug: string): Promise<TownRow[]> => {
+  const queryString = `
+        SELECT *
+        FROM towns
+        WHERE slug = $1`
+
+  return await database.query<TownRow>(queryString, [slug])
+}

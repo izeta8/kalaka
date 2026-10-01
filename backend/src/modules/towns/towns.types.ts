@@ -8,4 +8,4 @@ export interface TownRow {
   updatedAt: Date
 }
 
-export type TownBasic = Pick<TownRow, "slug" | "name">
+export type TownPublic = Pick<TownRow, "slug" | "name">
