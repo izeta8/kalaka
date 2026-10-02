@@ -41,7 +41,7 @@ export const publishPostInTown = async (
     return { ok: false, error: "town-not-found" }
   }
 
-  return publishPostInRoom(town.roomId, newPost)
+  return await publishPostInRoom(town.roomId, newPost)
 }
 
 export const publishPostInProvince = async (provinceSlug: string, newPost: NewPost): Promise<Result<PostPublic, PublishPostError>> => {
@@ -50,7 +50,7 @@ export const publishPostInProvince = async (provinceSlug: string, newPost: NewPo
     return { ok: false, error: "province-not-found" }
   }
 
-  return publishPostInRoom(province.roomId, newPost)
+  return await publishPostInRoom(province.roomId, newPost)
 }
 
 // Common part of publishing: the caller has already resolved the room of the town or province
