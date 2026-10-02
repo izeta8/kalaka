@@ -28,6 +28,6 @@
   "Namespace import": {
     "prefix": "imps",
     "body": "import * as ${1:name} from \"${2:./}\"",
-    "description": "import * as name from path"
-  }
+    "description": "import * as name from path",
+  },
 }

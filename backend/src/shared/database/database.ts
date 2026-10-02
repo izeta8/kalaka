@@ -1,4 +1,4 @@
-import { types as PgTypes, Pool } from "pg"
+import { Pool, types as PgTypes } from "pg"
 import { env } from "../config/config.ts"
 
 // By default node-postgres returns BIGINTs as strings.

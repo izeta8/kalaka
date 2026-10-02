@@ -21,7 +21,7 @@
     {
       "label": "lint: watch",
       "type": "shell",
-      "command": "node --watch-path=src --watch-preserve-output node_modules/@biomejs/biome/bin/biome lint --reporter=github src",
+      "command": "node --watch-path=src --watch-preserve-output node_modules/eslint/bin/eslint.js --format stylish src",
       "isBackground": true,
       "presentation": {
         "reveal": "never",
@@ -34,20 +34,9 @@
         "runOn": "folderOpen"
       },
       "problemMatcher": {
-        "owner": "biome-cli",
-        "source": "biome (project)",
-        "fileLocation": "absolute",
-        "pattern": {
-          "regexp": "^::(error|warning|notice) title=([^,]*),file=([^,]*),line=(\\d+),endLine=(\\d+),col=(\\d+),endColumn=(\\d+)::(.*)$",
-          "severity": 1,
-          "code": 2,
-          "file": 3,
-          "line": 4,
-          "endLine": 5,
-          "column": 6,
-          "endColumn": 7,
-          "message": 8
-        },
+        "base": "$eslint-stylish",
+        "owner": "eslint-cli",
+        "source": "eslint (project)",
         "background": {
           "activeBegin": true,
           "beginsPattern": "^(Change detected|Restarting) ",

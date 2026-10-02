@@ -1,4 +1,3 @@
-
 # API Conventions
 
 Database columns are in snake_case. But when fetching we convert them into camelCase.
