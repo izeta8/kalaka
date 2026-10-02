@@ -2,6 +2,7 @@ import assert from "node:assert/strict"
 import { after, describe, it } from "node:test"
 import request from "supertest"
 import { app } from "../../app.ts"
+import * as postsRepository from "../../modules/posts/posts.repository.ts"
 import { pool } from "../../shared/database/database.ts"
 
 // Without this the process of tests never ends
@@ -46,6 +47,16 @@ describe("POST /provinces/:provinceSlug/towns/:townSlug/posts", () => {
 
   it("creates a reply that references the replied post by slug and its author names only", async () => {
     const original = await request(app).post(townPostsUrl).send({ content: "Original post" })
+    const reply = await request(app).post(townPostsUrl).send({ content: "A reply", replyToPostSlug: original.body.slug })
+
+    assert.equal(reply.status, 201)
+    assert.deepStrictEqual(reply.body.replyTo, { slug: original.body.slug, author: { username: "test", displayName: "test" } })
+  })
+
+  it("creates a reply that references a deleted post", async () => {
+    const original = await request(app).post(townPostsUrl).send({ content: "Original post" })
+    const deletedPost = await postsRepository.softDeletePost(original.body.slug)
+    assert.notEqual(deletedPost, null)
     const reply = await request(app).post(townPostsUrl).send({ content: "A reply", replyToPostSlug: original.body.slug })
 
     assert.equal(reply.status, 201)

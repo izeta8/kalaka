@@ -16,6 +16,20 @@ export const insertPost = async ({ slug, content, authorId, replyToId, roomId }:
   return postRows[0]
 }
 
+// null when the post does not exist or was already deleted: the condition lives in the UPDATE, so there is no check-then-act race
+export const softDeletePost = async (slug: string): Promise<PostRow | null> => {
+  const queryString = `
+        UPDATE posts
+        SET deleted_at = now()
+        WHERE slug = $1
+        AND deleted_at IS NULL
+        RETURNING *`
+
+  const updatedRows = await database.query<PostRow>(queryString, [slug])
+
+  return updatedRows.length > 0 ? updatedRows[0] : null
+}
+
 export const findPostBySlug = async (slug: string): Promise<PostRow | null> => {
   const queryString = `
         SELECT *
