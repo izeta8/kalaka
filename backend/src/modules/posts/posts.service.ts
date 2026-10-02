@@ -1,13 +1,19 @@
 import { customAlphabet } from "nanoid"
 import { DatabaseError } from "pg"
+import * as provincesRepository from "../provinces/provinces.repository.ts"
 import * as townsRepository from "../towns/towns.repository.ts"
 import * as usersRepository from "../users/users.repository.ts"
 import * as usersService from "../users/users.service.ts"
 import type { UserRow } from "../users/users.types.ts"
 import * as postsRepository from "./posts.repository.ts"
-import type { PostInsert, PostPublic, PostReference, PostRow } from "./posts.types.ts"
+import type { PostInsert, PostPublic, PostReference, PostRequestData, PostRow } from "./posts.types.ts"
 
-type Result<T, E extends string> = { ok: true; value: T } | { ok: false; error: E }
+export type Result<T, E extends string> = { ok: true; value: T } | { ok: false; error: E }
+
+export type PublishPostError = "author-not-found" | "province-not-found" | "town-not-found" | "reply-to-not-found"
+
+// What the route passes to the service: the validated body plus who is posting
+export type NewPost = PostRequestData & { authorId: number }
 
 // How many random slugs to try when creating a post before giving up.
 // Each collision with an existing post slug uses one attempt.
@@ -18,25 +24,38 @@ const POST_SLUG_ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789"
 const POST_SLUG_LENGTH = 10
 const generatePostSlug = customAlphabet(POST_SLUG_ALPHABET, POST_SLUG_LENGTH)
 
-export const publishPost = async (
-  content: string,
-  replyToPostSlug: string | null,
+export const publishPostInTown = async (
   provinceSlug: string,
   townSlug: string,
-  authorId: number,
-): Promise<Result<PostPublic, "author-not-found" | "town-not-found" | "reply-to-not-found">> => {
-  // Check if the room exists
-  const author = await usersRepository.findUserById(authorId)
-  if (author === null) {
-    return { ok: false, error: "author-not-found" }
-  }
-  // The authentication will be implemented soon. We are just mocking insecurely...
-
-  // Check if town exists, if so, link the roomId of the town with the post.
+  newPost: NewPost,
+): Promise<Result<PostPublic, PublishPostError>> => {
   // A town slug is only unique inside its province, so both slugs are needed to find the town
   const town = await townsRepository.findTownBySlugs(provinceSlug, townSlug)
   if (town === null) {
     return { ok: false, error: "town-not-found" }
+  }
+
+  return publishPostInRoom(town.roomId, newPost)
+}
+
+export const publishPostInProvince = async (provinceSlug: string, newPost: NewPost): Promise<Result<PostPublic, PublishPostError>> => {
+  const province = await provincesRepository.findProvinceBySlug(provinceSlug)
+  if (province === null) {
+    return { ok: false, error: "province-not-found" }
+  }
+
+  return publishPostInRoom(province.roomId, newPost)
+}
+
+// Common part of publishing: the caller has already resolved the room of the town or province
+const publishPostInRoom = async (
+  roomId: number,
+  { authorId, content, replyToPostSlug }: NewPost,
+): Promise<Result<PostPublic, PublishPostError>> => {
+  // The authentication will be implemented soon. We are just mocking insecurely...
+  const author = await usersRepository.findUserById(authorId)
+  if (author === null) {
+    return { ok: false, error: "author-not-found" }
   }
 
   // If replyTo is not empty, check if the post exists and add to the insert object
@@ -51,7 +70,7 @@ export const publishPost = async (
   const postInsertData: Omit<PostInsert, "slug"> = {
     content: content,
     authorId: authorId,
-    roomId: town.roomId,
+    roomId: roomId,
     replyToId: replyToPost?.id || null,
   }
 

@@ -52,7 +52,7 @@ townsRouter.post("/:townSlug/posts", async (req: Request, res: Response) => {
   }
   const { content, replyToPostSlug }: PostRequestData = parsedRequestBody.data
 
-  const result = await postsService.publishPost(content, replyToPostSlug, provinceSlug, townSlug, authorId)
+  const result = await postsService.publishPostInTown(provinceSlug, townSlug, { content, replyToPostSlug, authorId })
 
   // Handle errors
   if (!result.ok) {
