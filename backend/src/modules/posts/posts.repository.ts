@@ -16,11 +16,12 @@ export const insertPost = async ({ slug, content, authorId, replyToId, roomId }:
   return postRows[0]
 }
 
-export const findPostBySlug = async (slug: string): Promise<PostRow[]> => {
+export const findPostBySlug = async (slug: string): Promise<PostRow | null> => {
   const queryString = `
         SELECT *
         FROM posts
         WHERE slug = $1`
 
-  return await database.query<PostRow>(queryString, [slug])
+  const postRows = await database.query<PostRow>(queryString, [slug])
+  return postRows.length > 0 ? postRows[0] : null
 }

@@ -30,7 +30,7 @@ export const publishPost = async (
   // If replyTo is not empty, check if the post exists and add to the insert object
   let replyToPost: PostRow | null = null
   if (replyToPostSlug !== null) {
-    replyToPost = await getPostBySlug(replyToPostSlug)
+    replyToPost = await findPostBySlug(replyToPostSlug)
     if (replyToPost === null) {
       return { ok: false, error: "reply-to-not-found" }
     }
@@ -97,16 +97,6 @@ export const idkthename = async (postData: Omit<PostInsert, "slug">): Promise<Po
   }
 
   return insertedPost
-}
-
-export const getPostBySlug = async (slug: string): Promise<PostRow | null> => {
-  const posts = await findPostBySlug(slug)
-
-  if (posts.length === 0) {
-    return null
-  }
-
-  return posts[0]
 }
 
 export const generatePostSlug = (): string => {
