@@ -1,0 +1,113 @@
+{
+  "app": {
+    "name": "kalaka",
+    "goHome": "Ir al inicio"
+  },
+  "language": {
+    "label": "Idioma"
+  },
+  "theme": {
+    "label": "Tema: {{mode}}. Pulsa para cambiar.",
+    "system": "el del sistema",
+    "light": "claro",
+    "dark": "oscuro"
+  },
+  "provinces": {
+    "title": "Provincias",
+    "intro": "Elige tu provincia y empieza a charlar.",
+    "empty": "Todavía no hay provincias."
+  },
+  "towns": {
+    "title": "Pueblos",
+    "empty": "Esta provincia aún no tiene pueblos.",
+    "search": "Busca un pueblo",
+    "searchPlaceholder": "Escribe el nombre del pueblo…",
+    "count_one": "{{count}} pueblo",
+    "count_many": "{{count}} pueblos",
+    "count_other": "{{count}} pueblos",
+    "noMatch": "Ningún pueblo coincide.",
+    "skipToList": "Ir a la lista de pueblos"
+  },
+  "map": {
+    "herrialdeak": "Mapa de Euskal Herria",
+    "towns": "Mapa de pueblos: {{name}}"
+  },
+  "composer": {
+    "label": "Escribe un mensaje",
+    "replyLabel": "Escribe una respuesta",
+    "placeholder": "¿Qué se cuenta?",
+    "replyPlaceholder": "Escribe tu respuesta…",
+    "counter": "{{count}} / {{max}}",
+    "tooLong": "Demasiado largo: máximo {{max}} caracteres.",
+    "publish": "Publicar",
+    "reply": "Responder",
+    "cancel": "Cancelar",
+    "published": "¡Publicado!",
+    "replied": "¡Respondido!"
+  },
+  "posts": {
+    "title": "Mensajes",
+    "empty": "Aún no hay mensajes. ¡Escribe el primero!",
+    "loadError": "No se han podido cargar los mensajes.",
+    "deleted": "Este mensaje se ha borrado.",
+    "replyTo": "En respuesta a @{{username}}",
+    "loadMore": "Cargar más",
+    "reply": "Responder",
+    "replyCount_one": "{{count}} respuesta",
+    "replyCount_many": "{{count}} respuestas",
+    "replyCount_other": "{{count}} respuestas"
+  },
+  "thread": {
+    "title": "Mensaje",
+    "replies": "Respuestas",
+    "empty": "Aún no hay respuestas. ¡Responde tú primero!",
+    "loadError": "No se han podido cargar las respuestas."
+  },
+  "status": {
+    "loading": "Cargando…",
+    "retry": "Reintentar"
+  },
+  "notFound": {
+    "title": "No lo encontramos",
+    "description": "Revisa la dirección o vuelve al inicio."
+  },
+  "crash": {
+    "title": "Algo ha fallado",
+    "description": "Recarga la página. Si sigue pasando, inténtalo más tarde.",
+    "reload": "Recargar"
+  },
+  "errors": {
+    "load": {
+      "network": "No se ha podido conectar con el servidor. Revisa la conexión e inténtalo de nuevo.",
+      "badRequest": "Esa dirección no es válida. Revísala e inténtalo de nuevo.",
+      "notFound": "No lo encontramos.",
+      "server": "Algo ha fallado en el servidor. Inténtalo más tarde.",
+      "unknown": "No se ha podido cargar. Inténtalo de nuevo."
+    },
+    "publish": {
+      "network": "No se ha podido publicar: no hay conexión con el servidor. Inténtalo de nuevo.",
+      "badRequest": "No se ha podido publicar. El mensaje debe tener entre 1 y {{max}} caracteres.",
+      "notFound": "No se ha podido publicar: esta sala no existe.",
+      "server": "No se ha podido publicar. Inténtalo de nuevo.",
+      "unknown": "No se ha podido publicar. Inténtalo de nuevo."
+    },
+    "reply": {
+      "network": "No se ha podido responder: no hay conexión con el servidor. Inténtalo de nuevo.",
+      "badRequest": "No se ha podido responder. La respuesta debe tener entre 1 y {{max}} caracteres.",
+      "notFound": "No se ha podido responder: ese mensaje no existe.",
+      "server": "No se ha podido responder. Inténtalo de nuevo.",
+      "unknown": "No se ha podido responder. Inténtalo de nuevo."
+    }
+  },
+  "time": {
+    "now": "ahora",
+    "minutes": "hace {{count}} min",
+    "hours": "hace {{count}} h",
+    "date": "{{day}} {{month}}",
+    "dateWithYear": "{{day}}/{{monthNumber}}/{{year}}",
+    "months": "ene|feb|mar|abr|may|jun|jul|ago|sept|oct|nov|dic"
+  },
+  "footer": {
+    "attribution": "Mapas: © IGN/CNIG (CC BY 4.0) · © IGN France, Etalab (Licence Ouverte)"
+  }
+}

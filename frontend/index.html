@@ -1,10 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="eu">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <meta name="theme-color" content="#0F4C5C" />
+    <title>kalaka</title>
+    <script>
+      // Apply the stored theme and language before the first paint to avoid a flash.
+      // Keys and values must match src/theme/theme-storage.ts and src/i18n/index.ts.
+      ;(function () {
+        var theme = "system"
+        var language = "eu"
+        try {
+          theme = localStorage.getItem("kalaka.theme") || "system"
+          language = localStorage.getItem("kalaka.language") || "eu"
+        } catch (e) {}
+        var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+        if (theme === "dark" || (theme !== "light" && prefersDark)) document.documentElement.classList.add("dark")
+        if (language === "es") document.documentElement.lang = "es"
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

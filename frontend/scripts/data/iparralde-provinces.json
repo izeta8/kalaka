@@ -1,0 +1,689 @@
+{
+  "description": "Historical province (Lapurdi, Nafarroa Beherea, Zuberoa) of each commune of the Pays Basque (Communauté d'agglomération Pays Basque, 158 communes). These provinces are not administrative units: build-maps.mjs draws each one as the union of its communes. Entries: { \"code\": INSEE code, \"name\": official French name }; the build checks both against the IGN/Etalab source.",
+  "sources": [
+    "https://fr.wikipedia.org/wiki/Liste_des_communes_du_Labourd",
+    "https://fr.wikipedia.org/wiki/Liste_des_communes_de_Basse-Navarre",
+    "https://fr.wikipedia.org/wiki/Liste_des_communes_de_Soule"
+  ],
+  "status": "Filled on 2026-10-02 from the three French Wikipedia lists (wikitext of that day), names matched to INSEE codes in the IGN/Etalab source. 160 communes: Lapurdi 41, Nafarroa Beherea 76, Zuberoa 43. The Communauté d'agglomération Pays Basque has 158; the difference is communes listed historically but outside it today.",
+  "provinces": {
+    "lapurdi": [
+      {
+        "code": "64009",
+        "name": "Ahetze"
+      },
+      {
+        "code": "64014",
+        "name": "Ainhoa"
+      },
+      {
+        "code": "64024",
+        "name": "Anglet"
+      },
+      {
+        "code": "64035",
+        "name": "Arbonne"
+      },
+      {
+        "code": "64038",
+        "name": "Arcangues"
+      },
+      {
+        "code": "64065",
+        "name": "Ascain"
+      },
+      {
+        "code": "64094",
+        "name": "Bardos"
+      },
+      {
+        "code": "64100",
+        "name": "Bassussarry"
+      },
+      {
+        "code": "64102",
+        "name": "Bayonne"
+      },
+      {
+        "code": "64122",
+        "name": "Biarritz"
+      },
+      {
+        "code": "64125",
+        "name": "Bidart"
+      },
+      {
+        "code": "64130",
+        "name": "Biriatou"
+      },
+      {
+        "code": "64134",
+        "name": "Bonloc"
+      },
+      {
+        "code": "64140",
+        "name": "Boucau"
+      },
+      {
+        "code": "64147",
+        "name": "Briscous"
+      },
+      {
+        "code": "64160",
+        "name": "Cambo-les-Bains"
+      },
+      {
+        "code": "64189",
+        "name": "Ciboure"
+      },
+      {
+        "code": "64213",
+        "name": "Espelette"
+      },
+      {
+        "code": "64249",
+        "name": "Guéthary"
+      },
+      {
+        "code": "64250",
+        "name": "Guiche"
+      },
+      {
+        "code": "64255",
+        "name": "Halsou"
+      },
+      {
+        "code": "64256",
+        "name": "Hasparren"
+      },
+      {
+        "code": "64260",
+        "name": "Hendaye"
+      },
+      {
+        "code": "64279",
+        "name": "Itxassou"
+      },
+      {
+        "code": "64282",
+        "name": "Jatxou"
+      },
+      {
+        "code": "64304",
+        "name": "Lahonce"
+      },
+      {
+        "code": "64317",
+        "name": "Larressore"
+      },
+      {
+        "code": "64350",
+        "name": "Louhossoa"
+      },
+      {
+        "code": "64364",
+        "name": "Macaye"
+      },
+      {
+        "code": "64377",
+        "name": "Mendionde"
+      },
+      {
+        "code": "64407",
+        "name": "Mouguerre"
+      },
+      {
+        "code": "64483",
+        "name": "Saint-Jean-de-Luz"
+      },
+      {
+        "code": "64495",
+        "name": "Saint-Pée-sur-Nivelle"
+      },
+      {
+        "code": "64496",
+        "name": "Saint-Pierre-d'Irube"
+      },
+      {
+        "code": "64504",
+        "name": "Sare"
+      },
+      {
+        "code": "64527",
+        "name": "Souraïde"
+      },
+      {
+        "code": "64540",
+        "name": "Urcuit"
+      },
+      {
+        "code": "64545",
+        "name": "Urrugne"
+      },
+      {
+        "code": "64546",
+        "name": "Urt"
+      },
+      {
+        "code": "64547",
+        "name": "Ustaritz"
+      },
+      {
+        "code": "64558",
+        "name": "Villefranque"
+      }
+    ],
+    "nafarroa-beherea": [
+      {
+        "code": "64008",
+        "name": "Ahaxe-Alciette-Bascassan"
+      },
+      {
+        "code": "64011",
+        "name": "Aincille"
+      },
+      {
+        "code": "64013",
+        "name": "Ainhice-Mongelos"
+      },
+      {
+        "code": "64016",
+        "name": "Aldudes"
+      },
+      {
+        "code": "64018",
+        "name": "Amendeuix-Oneix"
+      },
+      {
+        "code": "64019",
+        "name": "Amorots-Succos"
+      },
+      {
+        "code": "64026",
+        "name": "Anhaux"
+      },
+      {
+        "code": "64031",
+        "name": "Arancou"
+      },
+      {
+        "code": "64036",
+        "name": "Arbouet-Sussaute"
+      },
+      {
+        "code": "64034",
+        "name": "Arbérats-Sillègue"
+      },
+      {
+        "code": "64045",
+        "name": "Arhansus"
+      },
+      {
+        "code": "64046",
+        "name": "Armendarits"
+      },
+      {
+        "code": "64047",
+        "name": "Arnéguy"
+      },
+      {
+        "code": "64051",
+        "name": "Arraute-Charritte"
+      },
+      {
+        "code": "64066",
+        "name": "Ascarat"
+      },
+      {
+        "code": "64086",
+        "name": "Ayherre"
+      },
+      {
+        "code": "64010",
+        "name": "Aïcirits-Camou-Suhast"
+      },
+      {
+        "code": "64092",
+        "name": "Banca"
+      },
+      {
+        "code": "64113",
+        "name": "Bergouey-Viellenave"
+      },
+      {
+        "code": "64120",
+        "name": "Beyrie-sur-Joyeuse"
+      },
+      {
+        "code": "64123",
+        "name": "Bidache"
+      },
+      {
+        "code": "64124",
+        "name": "Bidarray"
+      },
+      {
+        "code": "64150",
+        "name": "Bunus"
+      },
+      {
+        "code": "64154",
+        "name": "Bussunarits-Sarrasquette"
+      },
+      {
+        "code": "64155",
+        "name": "Bustince-Iriberry"
+      },
+      {
+        "code": "64105",
+        "name": "Béguios"
+      },
+      {
+        "code": "64106",
+        "name": "Béhasque-Lapiste"
+      },
+      {
+        "code": "64107",
+        "name": "Béhorléguy"
+      },
+      {
+        "code": "64161",
+        "name": "Came"
+      },
+      {
+        "code": "64166",
+        "name": "Caro"
+      },
+      {
+        "code": "64205",
+        "name": "Escos"
+      },
+      {
+        "code": "64218",
+        "name": "Estérençuby"
+      },
+      {
+        "code": "64228",
+        "name": "Gabat"
+      },
+      {
+        "code": "64229",
+        "name": "Gamarthe"
+      },
+      {
+        "code": "64235",
+        "name": "Garris"
+      },
+      {
+        "code": "64265",
+        "name": "Hosta"
+      },
+      {
+        "code": "64259",
+        "name": "Hélette"
+      },
+      {
+        "code": "64267",
+        "name": "Ibarrolle"
+      },
+      {
+        "code": "64271",
+        "name": "Iholdy"
+      },
+      {
+        "code": "64272",
+        "name": "Ilharre"
+      },
+      {
+        "code": "64273",
+        "name": "Irissarry"
+      },
+      {
+        "code": "64274",
+        "name": "Irouléguy"
+      },
+      {
+        "code": "64275",
+        "name": "Ispoure"
+      },
+      {
+        "code": "64277",
+        "name": "Isturits"
+      },
+      {
+        "code": "64283",
+        "name": "Jaxu"
+      },
+      {
+        "code": "64285",
+        "name": "Juxue"
+      },
+      {
+        "code": "64289",
+        "name": "La Bastide-Clairence"
+      },
+      {
+        "code": "64294",
+        "name": "Labets-Biscay"
+      },
+      {
+        "code": "64297",
+        "name": "Lacarre"
+      },
+      {
+        "code": "64313",
+        "name": "Lantabat"
+      },
+      {
+        "code": "64314",
+        "name": "Larceveau-Arros-Cibits"
+      },
+      {
+        "code": "64319",
+        "name": "Larribar-Sorhapuru"
+      },
+      {
+        "code": "64322",
+        "name": "Lasse"
+      },
+      {
+        "code": "64327",
+        "name": "Lecumberry"
+      },
+      {
+        "code": "64362",
+        "name": "Luxe-Sumberraute"
+      },
+      {
+        "code": "64368",
+        "name": "Masparraute"
+      },
+      {
+        "code": "64379",
+        "name": "Mendive"
+      },
+      {
+        "code": "64375",
+        "name": "Méharin"
+      },
+      {
+        "code": "64429",
+        "name": "Orsanco"
+      },
+      {
+        "code": "64425",
+        "name": "Orègue"
+      },
+      {
+        "code": "64436",
+        "name": "Ossès"
+      },
+      {
+        "code": "64437",
+        "name": "Ostabat-Asme"
+      },
+      {
+        "code": "64476",
+        "name": "Saint-Esteben"
+      },
+      {
+        "code": "64485",
+        "name": "Saint-Jean-Pied-de-Port"
+      },
+      {
+        "code": "64484",
+        "name": "Saint-Jean-le-Vieux"
+      },
+      {
+        "code": "64487",
+        "name": "Saint-Just-Ibarre"
+      },
+      {
+        "code": "64489",
+        "name": "Saint-Martin-d'Arberoue"
+      },
+      {
+        "code": "64490",
+        "name": "Saint-Martin-d'Arrossa"
+      },
+      {
+        "code": "64492",
+        "name": "Saint-Michel"
+      },
+      {
+        "code": "64493",
+        "name": "Saint-Palais"
+      },
+      {
+        "code": "64477",
+        "name": "Saint-Étienne-de-Baïgorry"
+      },
+      {
+        "code": "64502",
+        "name": "Sames"
+      },
+      {
+        "code": "64528",
+        "name": "Suhescun"
+      },
+      {
+        "code": "64538",
+        "name": "Uhart-Cize"
+      },
+      {
+        "code": "64539",
+        "name": "Uhart-Mixe"
+      },
+      {
+        "code": "64543",
+        "name": "Urepel"
+      }
+    ],
+    "zuberoa": [
+      {
+        "code": "64012",
+        "name": "Ainharp"
+      },
+      {
+        "code": "64015",
+        "name": "Alçay-Alçabéhéty-Sunharette"
+      },
+      {
+        "code": "64017",
+        "name": "Alos-Sibas-Abense"
+      },
+      {
+        "code": "64049",
+        "name": "Aroue-Ithorots-Olhaïby"
+      },
+      {
+        "code": "64050",
+        "name": "Arrast-Larrebieu"
+      },
+      {
+        "code": "64081",
+        "name": "Aussurucq"
+      },
+      {
+        "code": "64093",
+        "name": "Barcus"
+      },
+      {
+        "code": "64115",
+        "name": "Berrogain-Laruns"
+      },
+      {
+        "code": "64162",
+        "name": "Camou-Cihigue"
+      },
+      {
+        "code": "64187",
+        "name": "Charritte-de-Bas"
+      },
+      {
+        "code": "64188",
+        "name": "Chéraute"
+      },
+      {
+        "code": "64202",
+        "name": "Domezain-Berraute"
+      },
+      {
+        "code": "64214",
+        "name": "Espès-Undurein"
+      },
+      {
+        "code": "64217",
+        "name": "Esquiule"
+      },
+      {
+        "code": "64221",
+        "name": "Etcharry"
+      },
+      {
+        "code": "64222",
+        "name": "Etchebar"
+      },
+      {
+        "code": "64231",
+        "name": "Garindein"
+      },
+      {
+        "code": "64242",
+        "name": "Gestas"
+      },
+      {
+        "code": "64247",
+        "name": "Gotein-Libarrenx"
+      },
+      {
+        "code": "64258",
+        "name": "Haux"
+      },
+      {
+        "code": "64268",
+        "name": "Idaux-Mendy"
+      },
+      {
+        "code": "64298",
+        "name": "Lacarry-Arhan-Charritte-de-Haut"
+      },
+      {
+        "code": "64303",
+        "name": "Laguinge-Restoue"
+      },
+      {
+        "code": "64316",
+        "name": "Larrau"
+      },
+      {
+        "code": "64264",
+        "name": "L'Hôpital-Saint-Blaise"
+      },
+      {
+        "code": "64340",
+        "name": "Lichans-Sunhar"
+      },
+      {
+        "code": "64342",
+        "name": "Licq-Athérey"
+      },
+      {
+        "code": "64345",
+        "name": "Lohitzun-Oyhercq"
+      },
+      {
+        "code": "64371",
+        "name": "Mauléon-Licharre"
+      },
+      {
+        "code": "64378",
+        "name": "Menditte"
+      },
+      {
+        "code": "64391",
+        "name": "Moncayolle-Larrory-Mendibieu"
+      },
+      {
+        "code": "64404",
+        "name": "Montory"
+      },
+      {
+        "code": "64411",
+        "name": "Musculdy"
+      },
+      {
+        "code": "64424",
+        "name": "Ordiarp"
+      },
+      {
+        "code": "64432",
+        "name": "Ossas-Suhare"
+      },
+      {
+        "code": "64435",
+        "name": "Osserain-Rivareyte"
+      },
+      {
+        "code": "64441",
+        "name": "Pagolle"
+      },
+      {
+        "code": "64468",
+        "name": "Roquiague"
+      },
+      {
+        "code": "64475",
+        "name": "Sainte-Engrâce"
+      },
+      {
+        "code": "64509",
+        "name": "Sauguis-Saint-Étienne"
+      },
+      {
+        "code": "64533",
+        "name": "Tardets-Sorholus"
+      },
+      {
+        "code": "64537",
+        "name": "Trois-Villes"
+      },
+      {
+        "code": "64559",
+        "name": "Viodos-Abense-de-Bas"
+      }
+    ]
+  },
+  "disputed": [
+    {
+      "code": "64441",
+      "name": "Pagolle",
+      "note": "The Soule / Basse-Navarre border runs through the commune; listed in both Wikipedia lists. Assigned to Zuberoa."
+    },
+    {
+      "code": "64102",
+      "name": "Bayonne",
+      "note": "Separated from Labourd in the 12th century; usually listed with it. Assigned to Lapurdi."
+    },
+    {
+      "code": "64140",
+      "name": "Boucau",
+      "note": "Part of the Landes until 1857; usually listed with Labourd. Assigned to Lapurdi."
+    },
+    {
+      "code": "64094",
+      "name": "Bardos",
+      "note": "In the Biltzar of Labourd 1763-1789 but judicially under the sénéchaussée de Came. Assigned to Lapurdi."
+    },
+    {
+      "code": "64250",
+      "name": "Guiche",
+      "note": "Same situation as Bardos. Assigned to Lapurdi."
+    },
+    {
+      "code": "64166",
+      "name": "Caro",
+      "note": "Written Çaro in the Wikipedia list; the official name is Caro."
+    }
+  ]
+}

@@ -7,15 +7,34 @@ are product decisions: the frontend agent asks the owner before making them.
 
 | Screen / feature | API | Status |
 |---|---|---|
-| Browse provinces and their towns | `GET /provinces`, `GET /provinces/:provinceSlug/towns` | Available |
+| Browse provinces and their towns, on a map and in a searchable list | `GET /provinces`, `GET /provinces/:provinceSlug/towns` | Available |
 | Publish a post in a province or town room | `POST /provinces/:provinceSlug/posts`, `POST /provinces/:provinceSlug/towns/:townSlug/posts` | Available |
-| Reply to a post | `POST /posts/:postSlug/replies` | Available |
-| See the posts of a room | — | **Requested** (backend issue) |
+| Reply to a post (deleted posts included) | `POST /posts/:postSlug/replies` | Available |
+| See the posts of a room (top-level only) | Proposed: `GET /provinces/:provinceSlug/posts`, `GET /provinces/:provinceSlug/towns/:townSlug/posts` | **Requested** (backend issue) |
+| See a post | Proposed: `GET /posts/:postSlug` | **Requested** (backend issue) |
+| See a post's direct replies | Proposed: `GET /posts/:postSlug/replies` | **Requested** (backend issue) |
 | Call the API from another origin | — | **Requested**: CORS (backend issue) |
+
+Proposed contracts (the frontend works against MSW mocks of them until they exist):
+
+- Lists (room posts, replies): newest first, `?limit=20&before=<cursor>` → `{ posts: PostPublic[], nextCursor: string | null }`. A room lists only its top-level posts; replies lists only the direct replies.
+- `GET /posts/:postSlug` → 200 `PostPublic`; 404 `{ "error": "the post does not exist" }`; 400 for an invalid slug, as in the replies route.
+- Optional `replyCount: number` in `PostPublic` (direct replies). The interface works without it.
 
 Out of this version: login and registration (they come after the backend's
 authentication task; until then the API mocks the author), likes, reposts,
 quotes, editing and deleting posts, user profiles.
+
+### Threads
+
+Like Twitter. A room's timeline shows only top-level posts. To see the replies
+you open the post: its page shows the post, a reply composer and its direct
+replies, newest first, with "load more". Each reply opens its own page, so you
+can go as deep as the conversation goes; a post that is a reply links to its
+parent.
+
+A deleted post keeps its place: its content is replaced by a translated
+placeholder, its author stays visible, and it can still be replied to.
 
 ## 2. Stack
 
@@ -76,11 +95,44 @@ All text pairs must pass WCAG AA contrast; check them when the tokens go into th
 
 | Route | Screen |
 |---|---|
-| `/` | Provinces |
-| `/:provinceSlug` | Province room (its posts and composer) + list of its towns |
+| `/` | Provinces: map of the 7 herrialdeak + list |
+| `/:provinceSlug` | Map of its municipalities + searchable list of its towns, then the province room (its posts and composer) |
 | `/:provinceSlug/:townSlug` | Town room (its posts and composer) |
+| `/posts/:postSlug` | Post page: the post, a link to its room, its reply composer and its direct replies |
 
-Replying opens a composer under the post, inside the room. A dedicated post/thread page waits for a backend endpoint to read a thread.
+`posts` is a static segment, so `/posts/:postSlug` never clashes with a province or town route.
+The reply action in a timeline opens the post page with the reply composer focused.
+
+### Maps
+
+Navigation by a real map of the official boundaries, drawn as SVG with d3-geo
+(no tiles, no third-party services), in the Cantábrico colours, light and dark.
+
+- `/`: the 7 herrialdeak. Clicking one opens its province.
+- `/:provinceSlug`: the province's municipalities. A municipality is a link to
+  its town when the API has that town; the rest (and shared land such as
+  parzonerías or Bardenas Reales) are drawn muted and are not clickable, so the
+  shape stays complete.
+- Accessibility: map regions that are links are focusable, named and open with
+  Enter; under the map there is always a list (searchable on the province page,
+  accent-insensitive), with a skip link from the map to it.
+- Boundaries are the administrative ones: enclaves of other provinces (Trebiñu
+  and La Puebla de Arganzón in Araba, Valle de Villaverde in Bizkaia) are holes.
+- Lapurdi, Nafarroa Beherea and Zuberoa are historical provinces, not
+  administrative units: each is drawn as the union of its communes, from a
+  reviewable assignment file with its sources.
+
+Data and licences (attributed in the footer):
+
+| Area | Source | Licence |
+|---|---|---|
+| Araba, Bizkaia, Gipuzkoa, Nafarroa | IGN/CNIG "Líneas límite municipales", through the `es-atlas` package (INE codes) | CC BY 4.0 |
+| Lapurdi, Nafarroa Beherea, Zuberoa | IGN France Admin Express through geo.api.gouv.fr (Etalab), communes of département 64 (INSEE codes) | Licence Ouverte 2.0 |
+
+`scripts/build-maps.mjs` builds the maps into `src/data/maps/` (TopoJSON, one
+file per screen, lazy-loaded) and the table that links each town of the API
+seed to its municipality code (`src/data/town-municipalities.json`). A test
+checks that every town in the seed has exactly one polygon.
 
 ## 7. Tests
 

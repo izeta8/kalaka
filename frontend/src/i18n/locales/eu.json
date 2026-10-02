@@ -1,0 +1,111 @@
+{
+  "app": {
+    "name": "kalaka",
+    "goHome": "Joan hasierara"
+  },
+  "language": {
+    "label": "Hizkuntza"
+  },
+  "theme": {
+    "label": "Itxura: {{mode}}. Sakatu aldatzeko.",
+    "system": "sistemarena",
+    "light": "argia",
+    "dark": "iluna"
+  },
+  "provinces": {
+    "title": "Herrialdeak",
+    "intro": "Aukeratu zure herrialdea eta hasi berriketan.",
+    "empty": "Oraindik ez dago herrialderik."
+  },
+  "towns": {
+    "title": "Herriak",
+    "empty": "Herrialde honek ez du herririk oraindik.",
+    "search": "Bilatu herria",
+    "searchPlaceholder": "Idatzi herriaren izena…",
+    "count_one": "{{count}} herri",
+    "count_other": "{{count}} herri",
+    "noMatch": "Ez dago izen hori duen herririk.",
+    "skipToList": "Joan herrien zerrendara"
+  },
+  "map": {
+    "herrialdeak": "Euskal Herriko mapa",
+    "towns": "Herrien mapa: {{name}}"
+  },
+  "composer": {
+    "label": "Idatzi mezu bat",
+    "replyLabel": "Idatzi erantzun bat",
+    "placeholder": "Zer berri?",
+    "replyPlaceholder": "Idatzi zure erantzuna…",
+    "counter": "{{count}} / {{max}}",
+    "tooLong": "Luzeegia: gehienez {{max}} karaktere.",
+    "publish": "Argitaratu",
+    "reply": "Erantzun",
+    "cancel": "Utzi",
+    "published": "Argitaratuta!",
+    "replied": "Erantzunda!"
+  },
+  "posts": {
+    "title": "Mezuak",
+    "empty": "Oraindik ez dago mezurik. Idatzi lehena!",
+    "loadError": "Ezin izan dira mezuak kargatu.",
+    "deleted": "Mezu hau ezabatu egin da.",
+    "replyTo": "Honi erantzuten: @{{username}}",
+    "loadMore": "Kargatu gehiago",
+    "reply": "Erantzun",
+    "replyCount_one": "{{count}} erantzun",
+    "replyCount_other": "{{count}} erantzun"
+  },
+  "thread": {
+    "title": "Mezua",
+    "replies": "Erantzunak",
+    "empty": "Oraindik ez dago erantzunik. Erantzun zuk lehena!",
+    "loadError": "Ezin izan dira erantzunak kargatu."
+  },
+  "status": {
+    "loading": "Kargatzen…",
+    "retry": "Saiatu berriro"
+  },
+  "notFound": {
+    "title": "Ez dugu hau aurkitu",
+    "description": "Begiratu helbidea edo itzuli hasierara."
+  },
+  "crash": {
+    "title": "Zerbaitek huts egin du",
+    "description": "Kargatu berriro orria. Hala ere badirau, saiatu geroago.",
+    "reload": "Kargatu berriro"
+  },
+  "errors": {
+    "load": {
+      "network": "Ezin izan da zerbitzarira konektatu. Begiratu konexioa eta saiatu berriro.",
+      "badRequest": "Helbide hori ez da zuzena. Begiratu eta saiatu berriro.",
+      "notFound": "Ez dugu hau aurkitu.",
+      "server": "Zerbitzarian zerbaitek huts egin du. Saiatu berriro geroago.",
+      "unknown": "Ezin izan da kargatu. Saiatu berriro."
+    },
+    "publish": {
+      "network": "Ezin izan da argitaratu: zerbitzarira ezin da konektatu. Saiatu berriro.",
+      "badRequest": "Ezin izan da argitaratu. Mezuak 1 eta {{max}} karaktere artean izan behar ditu.",
+      "notFound": "Ezin izan da argitaratu: gela hau ez dago.",
+      "server": "Ezin izan da argitaratu. Saiatu berriro.",
+      "unknown": "Ezin izan da argitaratu. Saiatu berriro."
+    },
+    "reply": {
+      "network": "Ezin izan da erantzun: zerbitzarira ezin da konektatu. Saiatu berriro.",
+      "badRequest": "Ezin izan da erantzun. Erantzunak 1 eta {{max}} karaktere artean izan behar ditu.",
+      "notFound": "Ezin izan da erantzun: mezu hori ez dago.",
+      "server": "Ezin izan da erantzun. Saiatu berriro.",
+      "unknown": "Ezin izan da erantzun. Saiatu berriro."
+    }
+  },
+  "time": {
+    "now": "orain",
+    "minutes": "duela {{count}} min",
+    "hours": "duela {{count}} h",
+    "date": "{{month}} {{day}}",
+    "dateWithYear": "{{year}}/{{monthNumber}}/{{day}}",
+    "months": "urt.|ots.|mar.|api.|mai.|eka.|uzt.|abu.|ira.|urr.|aza.|abe."
+  },
+  "footer": {
+    "attribution": "Mapak: © IGN/CNIG (CC BY 4.0) · © IGN France, Etalab (Licence Ouverte)"
+  }
+}

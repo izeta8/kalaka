@@ -25,3 +25,9 @@ dist-ssr
 
 # Local config (copy .env.example)
 .env
+
+# Mock-mode settings (no secrets): committed on purpose, the root .gitignore excludes .env.*
+!.env.mock
+
+# Downloaded map sources (npm run maps:download); the built maps in src/data/maps are committed
+scripts/sources/
