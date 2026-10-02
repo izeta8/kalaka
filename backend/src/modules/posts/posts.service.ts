@@ -13,6 +13,11 @@ type Result<T, E extends string> = { ok: true; value: T } | { ok: false; error: 
 // Each collision with an existing post slug uses one attempt.
 const MAX_POST_SLUG_ATTEMPTS = 4
 
+// Post slugs: 10 random characters of a-z0-9 (posts_slug_format in the database)
+const POST_SLUG_ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789"
+const POST_SLUG_LENGTH = 10
+const generatePostSlug = customAlphabet(POST_SLUG_ALPHABET, POST_SLUG_LENGTH)
+
 export const publishPost = async (
   content: string,
   replyToPostSlug: string | null,
@@ -101,9 +106,4 @@ const createPostWithUniqueSlug = async (postData: Omit<PostInsert, "slug">): Pro
   }
 
   throw new Error(`could not generate a unique post slug after ${MAX_POST_SLUG_ATTEMPTS} attempts`)
-}
-
-export const generatePostSlug = (): string => {
-  const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz1234567890", 10)
-  return nanoid(10)
 }
