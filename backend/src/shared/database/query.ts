@@ -9,7 +9,7 @@ export async function query<T>(text: string, values?: unknown[]): Promise<T[]> {
 }
 
 const fromSnakeToCamelCase = (text: string): string => {
-  return text.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
+  return text.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())
 }
 
 // Shallow on purpose: pg rows are flat. Values (Date, jsonb…) are left untouched.
