@@ -9,6 +9,10 @@ import type { PostInsert, PostPublic, PostReference, PostRow } from "./posts.typ
 
 type Result<T, E extends string> = { ok: true; value: T } | { ok: false; error: E }
 
+// How many random slugs to try when creating a post before giving up.
+// Each collision with an existing post slug uses one attempt.
+const MAX_POST_SLUG_ATTEMPTS = 4
+
 export const publishPost = async (
   content: string,
   replyToPostSlug: string | null,
@@ -46,7 +50,7 @@ export const publishPost = async (
     replyToId: replyToPost?.id || null,
   }
 
-  const post = await idkthename(postInsertData)
+  const post = await createPostWithUniqueSlug(postInsertData)
 
   const postPublic = privateToPublicPost(post, author, replyToPost)
 
@@ -79,27 +83,24 @@ export const privateToPublicPost = (
   }
 }
 
-export const idkthename = async (postData: Omit<PostInsert, "slug">): Promise<PostRow> => {
-  const MAX_RETRIES = 4
-  let currentTries = 0
-  let insertedPost: PostRow | undefined
+// Retries only when the random slug collides with an existing one. Any other error is not fixed by retrying.
+const createPostWithUniqueSlug = async (postData: Omit<PostInsert, "slug">): Promise<PostRow> => {
+  for (let attempt = 1; attempt <= MAX_POST_SLUG_ATTEMPTS; attempt++) {
+    const slug = generatePostSlug()
 
-  // Why retry 4 times if post slug collides with an existing one (is a UNIQUE field)
-  while (!insertedPost || currentTries >= MAX_RETRIES) {
     try {
-      const slug = generatePostSlug()
-      const postToInsert: PostInsert = { ...postData, slug }
-      insertedPost = await postsRepository.insertPost(postToInsert)
+      return await postsRepository.insertPost({ ...postData, slug })
     } catch (error) {
-      if (error instanceof DatabaseError && error.constraint === "posts_slug_key") {
-        // If reached here, the slug has collided with a existing post. So we retry
-        console.log(`slug has collided with an existing post when inserting a new post. (what info would you put here?)`) // como puedo poner el slug aqui? lo deberia meter en el error que lanza insertPost()? o deberia sacar la variable slug fuera del scope del try-catch? y deberia poner la variable retries?
-        currentTries++
+      const isSlugCollision = error instanceof DatabaseError && error.code === "23505" && error.constraint === "posts_slug_key"
+      if (!isSlugCollision) {
+        throw error
       }
+
+      console.warn(`post slug collision (slug: ${slug}, attempt ${attempt} of ${MAX_POST_SLUG_ATTEMPTS})`)
     }
   }
 
-  return insertedPost
+  throw new Error(`could not generate a unique post slug after ${MAX_POST_SLUG_ATTEMPTS} attempts`)
 }
 
 export const generatePostSlug = (): string => {
