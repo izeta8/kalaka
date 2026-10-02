@@ -3,11 +3,11 @@ export interface UserRow {
   publicId: string
   username: string
   displayName: string
-  bio: string
-  avatarUrl: string
+  bio: string | null
+  avatarUrl: string | null
   email: string
-  emailVerifiedAt: Date
-  townId: number
+  emailVerifiedAt: Date | null
+  townId: number | null
   createdAt: Date
   updatedAt: Date
 }
