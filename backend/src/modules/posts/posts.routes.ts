@@ -78,5 +78,8 @@ const sendPublishResult = (
     case "reply-to-not-found":
       res.status(404).send({ error: "the post you are replying to does not exist" })
       return
+    default:
+      // If a new error is added to PublishPostError and not handled above, this line stops compiling
+      result.error satisfies never
   }
 }
