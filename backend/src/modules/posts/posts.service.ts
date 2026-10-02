@@ -11,7 +11,7 @@ type Result<T, E extends string> = { ok: true; value: T } | { ok: false; error: 
 
 export const publishPost = async (
   content: string,
-  replyToPostSlug: string,
+  replyToPostSlug: string | null,
   provinceSlug: string,
   townSlug: string,
   authorId: number,

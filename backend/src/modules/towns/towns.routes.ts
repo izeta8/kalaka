@@ -1,7 +1,8 @@
 import { type Request, type Response, Router } from "express"
+import { PostRequestSchema } from "../posts/posts.schemas.ts"
 import * as postsService from "../posts/posts.service.ts"
 import type { PostRequestData } from "../posts/posts.types.ts"
-import { PostInsertSchema, SlugSchema } from "./towns.schemas.ts"
+import { SlugSchema } from "./towns.schemas.ts"
 import * as townsService from "./towns.service.ts"
 
 export const townsRouter = Router({ mergeParams: true })
@@ -44,7 +45,7 @@ townsRouter.post("/:townSlug/posts", async (req: Request, res: Response) => {
   const townSlug = parsedTownSlug.data
 
   // Validate body schema
-  const parsedRequestBody = PostInsertSchema.safeParse(req.body)
+  const parsedRequestBody = PostRequestSchema.safeParse(req.body)
   if (!parsedRequestBody.success) {
     res.status(400).send({ error: "the body contains invalid data" })
     return
