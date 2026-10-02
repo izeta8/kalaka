@@ -20,6 +20,9 @@ app.get("/health", async (_req: Request, res: Response) => {
   }
 })
 
+// Parse JSON bodies into req.body
+app.use(express.json())
+
 app.use("/provinces", provincesRouter)
 
 app.use((_req: Request, res: Response, _next: NextFunction) => {
@@ -27,6 +30,12 @@ app.use((_req: Request, res: Response, _next: NextFunction) => {
 })
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  // express.json() marks a malformed body with this type: it is the client's fault, not a 500
+  if ("type" in err && err.type === "entity.parse.failed") {
+    res.status(400).send({ error: "the body is not valid JSON" })
+    return
+  }
+
   console.error(err.stack)
   res.status(500).send({ error: "there was an error in the request" })
 })
