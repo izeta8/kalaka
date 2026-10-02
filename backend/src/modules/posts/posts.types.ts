@@ -15,10 +15,10 @@ export interface PostRow {
   // quoteToId: number | null
 }
 
-// Data user sends in the body when POST: /post in any endpoint (whether town, province...)
+// Data user sends in the body of any post endpoint (town, province or reply).
+// What the post replies to comes from the URL, not from the body
 export interface PostRequestData {
   content: string
-  replyToPostSlug: string | null
   // quoteToPostSlug: string | null
 }
 

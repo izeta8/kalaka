@@ -1,6 +1,6 @@
-import type { Request, Response } from "express"
+import { type Request, type Response, Router } from "express"
 import { SlugSchema } from "../towns/towns.schemas.ts"
-import { PostRequestSchema } from "./posts.schemas.ts"
+import { PostRequestSchema, PostSlugSchema } from "./posts.schemas.ts"
 import * as postsService from "./posts.service.ts"
 import type { PostPublic } from "./posts.types.ts"
 
@@ -75,11 +75,46 @@ const sendPublishResult = (
     case "town-not-found":
       res.status(404).send({ error: `there is no such town '${townSlug}' in province '${provinceSlug}'` })
       return
-    case "reply-to-not-found":
-      res.status(404).send({ error: "the post you are replying to does not exist" })
-      return
     default:
       // If a new error is added to PublishPostError and not handled above, this line stops compiling
       result.error satisfies never
   }
 }
+
+// POST /posts/:postSlug/replies
+// No province or town in the URL: the reply goes to the room of the replied post
+export const createReply = async (req: Request, res: Response) => {
+  const postSlug = PostSlugSchema.safeParse(req.params.postSlug)
+  if (!postSlug.success) {
+    res.status(400).send({ error: "the slug must be a valid post slug" })
+    return
+  }
+
+  const body = PostRequestSchema.safeParse(req.body)
+  if (!body.success) {
+    res.status(400).send({ error: "the body contains invalid data" })
+    return
+  }
+
+  const result = await postsService.publishReply(postSlug.data, { ...body.data, authorId: MOCKED_AUTHOR_ID })
+
+  if (result.ok) {
+    res.status(201).send(result.value)
+    return
+  }
+
+  switch (result.error) {
+    case "author-not-found":
+      res.status(404).send({ error: "the author does not exist" })
+      return
+    case "reply-to-not-found":
+      res.status(404).send({ error: "the post you are replying to does not exist" })
+      return
+    default:
+      result.error satisfies never
+  }
+}
+
+export const postsRouter = Router()
+
+postsRouter.post("/:postSlug/replies", createReply)

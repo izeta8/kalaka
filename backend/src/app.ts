@@ -1,4 +1,5 @@
 import express, { type Express, type NextFunction, type Request, type Response } from "express"
+import { postsRouter } from "./modules/posts/posts.routes.ts"
 import { provincesRouter } from "./modules/provinces/provinces.routes.ts"
 export const app: Express = express()
 
@@ -24,6 +25,7 @@ app.get("/health", async (_req: Request, res: Response) => {
 app.use(express.json())
 
 app.use("/provinces", provincesRouter)
+app.use("/posts", postsRouter)
 
 app.use((_req: Request, res: Response, _next: NextFunction) => {
   res.status(404).send({ error: "sorry, can't find that!" })

@@ -45,31 +45,6 @@ describe("POST /provinces/:provinceSlug/towns/:townSlug/posts", () => {
     assert.equal(res.body.content, "Kaixo!")
   })
 
-  it("creates a reply that references the replied post by slug and its author names only", async () => {
-    const original = await request(app).post(townPostsUrl).send({ content: "Original post" })
-    const reply = await request(app).post(townPostsUrl).send({ content: "A reply", replyToPostSlug: original.body.slug })
-
-    assert.equal(reply.status, 201)
-    assert.deepStrictEqual(reply.body.replyTo, { slug: original.body.slug, author: { username: "test", displayName: "test" } })
-  })
-
-  it("creates a reply that references a deleted post", async () => {
-    const original = await request(app).post(townPostsUrl).send({ content: "Original post" })
-    const deletedPost = await postsRepository.softDeletePost(original.body.slug)
-    assert.notEqual(deletedPost, null)
-    const reply = await request(app).post(townPostsUrl).send({ content: "A reply", replyToPostSlug: original.body.slug })
-
-    assert.equal(reply.status, 201)
-    assert.deepStrictEqual(reply.body.replyTo, { slug: original.body.slug, author: { username: "test", displayName: "test" } })
-  })
-
-  it("responds 404 when the replied post does not exist", async () => {
-    const res = await request(app).post(townPostsUrl).send({ content: "A reply", replyToPostSlug: "zzzzzzzzzz" })
-
-    assert.equal(res.status, 404)
-    assert.deepStrictEqual(res.body, { error: "the post you are replying to does not exist" })
-  })
-
   it("responds 404 when the town does not exist", async () => {
     const res = await request(app).post("/provinces/gipuzkoa/towns/madrid/posts").send({ content: "Kaixo" })
 
@@ -109,6 +84,65 @@ describe("POST /provinces/:provinceSlug/posts", () => {
   })
 })
 
+const repliesUrl = (postSlug: string) => `/posts/${postSlug}/replies`
+
+describe("POST /posts/:postSlug/replies", () => {
+  it("creates a reply that references the replied post by slug and its author names only", async () => {
+    const original = await request(app).post(townPostsUrl).send({ content: "Original post" })
+    const reply = await request(app).post(repliesUrl(original.body.slug)).send({ content: "A reply" })
+
+    assert.equal(reply.status, 201)
+    assert.deepStrictEqual(Object.keys(reply.body).sort(), PUBLIC_POST_KEYS)
+    assert.equal(reply.body.content, "A reply")
+    assert.deepStrictEqual(reply.body.replyTo, { slug: original.body.slug, author: { username: "test", displayName: "test" } })
+  })
+
+  it("publishes the reply in the room of the replied post", async () => {
+    const original = await request(app).post(townPostsUrl).send({ content: "Original post" })
+    const reply = await request(app).post(repliesUrl(original.body.slug)).send({ content: "A reply" })
+
+    // The room is internal: the API does not expose it, so the rows are read directly
+    const originalRow = await postsRepository.findPostBySlug(original.body.slug)
+    const replyRow = await postsRepository.findPostBySlug(reply.body.slug)
+    assert.ok(originalRow !== null && replyRow !== null)
+    assert.equal(replyRow.roomId, originalRow.roomId)
+    assert.equal(replyRow.replyToId, originalRow.id)
+  })
+
+  it("allows replying to a deleted post and still shows its author", async () => {
+    const original = await request(app).post(townPostsUrl).send({ content: "Original post" })
+    const deletedPost = await postsRepository.softDeletePost(original.body.slug)
+    assert.notEqual(deletedPost, null)
+
+    const reply = await request(app).post(repliesUrl(original.body.slug)).send({ content: "A reply" })
+
+    assert.equal(reply.status, 201)
+    assert.deepStrictEqual(reply.body.replyTo, { slug: original.body.slug, author: { username: "test", displayName: "test" } })
+  })
+
+  it("responds 404 when the replied post does not exist", async () => {
+    const res = await request(app).post(repliesUrl("zzzzzzzzzz")).send({ content: "A reply" })
+
+    assert.equal(res.status, 404)
+    assert.deepStrictEqual(res.body, { error: "the post you are replying to does not exist" })
+  })
+
+  it("responds 400 when the post slug is invalid", async () => {
+    const res = await request(app).post(repliesUrl("NOT-A-SLUG")).send({ content: "A reply" })
+
+    assert.equal(res.status, 400)
+    assert.deepStrictEqual(res.body, { error: "the slug must be a valid post slug" })
+  })
+
+  it("responds 400 when the body is invalid", async () => {
+    const original = await request(app).post(townPostsUrl).send({ content: "Original post" })
+    const res = await request(app).post(repliesUrl(original.body.slug)).send({ content: "" })
+
+    assert.equal(res.status, 400)
+    assert.deepStrictEqual(res.body, { error: "the body contains invalid data" })
+  })
+})
+
 describe("POST .../posts with an invalid body", () => {
   const invalidBodies = [
     { name: "empty content", body: { content: "" } },
@@ -116,7 +150,8 @@ describe("POST .../posts with an invalid body", () => {
     { name: "content longer than 500 characters", body: { content: "a".repeat(501) } },
     { name: "missing content", body: {} },
     { name: "content that is not a string", body: { content: 42 } },
-    { name: "invalid replyToPostSlug", body: { content: "Kaixo", replyToPostSlug: "NOT-A-SLUG" } },
+    // Replies go through POST /posts/:postSlug/replies: a room route must not drop the key and create a top-level post
+    { name: "a replyToPostSlug", body: { content: "Kaixo", replyToPostSlug: "abcdefghij" } },
   ]
 
   for (const { name, body } of invalidBodies) {

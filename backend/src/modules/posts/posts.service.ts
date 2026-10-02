@@ -10,7 +10,9 @@ import type { PostInsert, PostPublic, PostRequestData, PostRow } from "./posts.t
 
 export type Result<T, E extends string> = { ok: true; value: T } | { ok: false; error: E }
 
-export type PublishPostError = "author-not-found" | "province-not-found" | "town-not-found" | "reply-to-not-found"
+export type PublishPostError = "author-not-found" | "province-not-found" | "town-not-found"
+
+export type PublishReplyError = "author-not-found" | "reply-to-not-found"
 
 // What the route passes to the service: the validated body plus who is posting
 export type NewPost = PostRequestData & { authorId: number }
@@ -41,7 +43,7 @@ export const publishPostInTown = async (
     return { ok: false, error: "town-not-found" }
   }
 
-  return await publishPostInRoom(town.roomId, newPost)
+  return await publishPost(newPost, town.roomId, null)
 }
 
 export const publishPostInProvince = async (provinceSlug: string, newPost: NewPost): Promise<Result<PostPublic, PublishPostError>> => {
@@ -50,35 +52,36 @@ export const publishPostInProvince = async (provinceSlug: string, newPost: NewPo
     return { ok: false, error: "province-not-found" }
   }
 
-  return await publishPostInRoom(province.roomId, newPost)
+  return await publishPost(newPost, province.roomId, null)
 }
 
-// Common part of publishing: the caller has already resolved the room of the town or province
-const publishPostInRoom = async (
+// A reply always lives in the room of the post it replies to: the client cannot choose another one
+export const publishReply = async (repliedPostSlug: string, newPost: NewPost): Promise<Result<PostPublic, PublishReplyError>> => {
+  // A deleted post can still be replied to: deleting only hides its content
+  const repliedPost = await postsRepository.findPostBySlug(repliedPostSlug)
+  if (repliedPost === null) {
+    return { ok: false, error: "reply-to-not-found" }
+  }
+
+  // posts.author_id is NOT NULL and references users, so a post without author is a bug
+  const repliedPostAuthor = await usersRepository.findUserById(repliedPost.authorId)
+  if (repliedPostAuthor === null) {
+    throw new Error(`author of post ${repliedPost.slug} not found (authorId: ${repliedPost.authorId})`)
+  }
+
+  return await publishPost(newPost, repliedPost.roomId, { post: repliedPost, author: repliedPostAuthor })
+}
+
+// Common part of publishing: the caller has already resolved the room and, for a reply, the replied post
+const publishPost = async (
+  { authorId, content }: NewPost,
   roomId: number,
-  { authorId, content, replyToPostSlug }: NewPost,
-): Promise<Result<PostPublic, PublishPostError>> => {
+  replyTo: ReplyToData | null,
+): Promise<Result<PostPublic, "author-not-found">> => {
   // The authentication will be implemented soon. We are just mocking insecurely...
   const author = await usersRepository.findUserById(authorId)
   if (author === null) {
     return { ok: false, error: "author-not-found" }
-  }
-
-  // If the post is a reply, the replied post must exist
-  let replyTo: ReplyToData | null = null
-  if (replyToPostSlug !== null) {
-    const repliedPost = await postsRepository.findPostBySlug(replyToPostSlug)
-    if (repliedPost === null) {
-      return { ok: false, error: "reply-to-not-found" }
-    }
-
-    // posts.author_id is NOT NULL and references users, so a post without author is a bug
-    const repliedPostAuthor = await usersRepository.findUserById(repliedPost.authorId)
-    if (repliedPostAuthor === null) {
-      throw new Error(`author of post ${repliedPost.slug} not found (authorId: ${repliedPost.authorId})`)
-    }
-
-    replyTo = { post: repliedPost, author: repliedPostAuthor }
   }
 
   const postInsertData: Omit<PostInsert, "slug"> = {
