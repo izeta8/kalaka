@@ -85,7 +85,7 @@ const publishPostInRoom = async (
     content: content,
     authorId: authorId,
     roomId: roomId,
-    replyToId: replyTo?.post.id || null,
+    replyToId: replyTo?.post.id ?? null,
   }
 
   const post = await createPostWithUniqueSlug(postInsertData)
