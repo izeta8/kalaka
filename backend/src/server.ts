@@ -19,24 +19,14 @@ function gracefulShutdown(signal: NodeJS.Signals) {
   console.log(`\nReceived ${signal}. Starting graceful shutdown...`)
 
   // Stop accepting new connections
-  server.close(async (err) => {
+  server.close((err) => {
     if (err) {
       console.error("Error closing Express server:", err)
       process.exit(1)
     }
     console.log("Express server closed. No longer accepting requests.")
 
-    // Execute custom cleanup code
-    try {
-      await pool.end()
-      console.log("Database connections closed.")
-
-      // Exit successfully
-      process.exit(0)
-    } catch (cleanupError) {
-      console.error("Error during cleanup:", cleanupError)
-      process.exit(1)
-    }
+    void cleanup()
   })
 
   // Fail-safe timeout
@@ -44,5 +34,17 @@ function gracefulShutdown(signal: NodeJS.Signals) {
   setTimeout(() => {
     console.error("Graceful shutdown timeout exceeded. Forcefully exiting...")
     process.exit(1)
-  }, 10000) // 10 seconds
+  }, 10000).unref() // 10 seconds; unref so the timer alone doesn't keep the process alive
+}
+
+// Execute custom cleanup code
+async function cleanup() {
+  try {
+    await pool.end()
+    console.log("Database connections closed.")
+    process.exit(0)
+  } catch (cleanupError) {
+    console.error("Error during cleanup:", cleanupError)
+    process.exit(1)
+  }
 }
