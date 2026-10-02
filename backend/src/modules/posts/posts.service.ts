@@ -1,6 +1,7 @@
 import { customAlphabet } from "nanoid"
 import { DatabaseError } from "pg"
 import * as townsService from "../towns/towns.service.ts"
+import { findUserById } from "../users/users.repository.ts"
 import * as usersService from "../users/users.service.ts"
 import type { UserRow } from "../users/users.types.ts"
 import { findPostBySlug, insertPost } from "./posts.repository.ts"
@@ -15,7 +16,7 @@ export const publishPost = async (
   authorId: number,
 ): Promise<Result<PostPublic, "author-not-found" | "town-not-found" | "reply-to-not-found">> => {
   // Check if the room exists
-  const author = await usersService.getUserById(authorId)
+  const author = await findUserById(authorId)
   if (author === null) {
     return { ok: false, error: "author-not-found" }
   }
