@@ -56,7 +56,8 @@ describe("maps", () => {
 
     expect(await within(towns).findAllByRole("link")).toHaveLength(88)
     // 88 municipalities + 2 pieces of shared land (not towns): drawn, not links.
-    expect(container.querySelectorAll("svg[aria-label='Herrien mapa: Gipuzkoa'] path:not(.pointer-events-none)")).toHaveLength(90)
+    const svg = "svg[aria-label='Herrien mapa: Gipuzkoa']"
+    expect(container.querySelectorAll(`${svg} > a > path, ${svg} > path:not(.pointer-events-none)`)).toHaveLength(90)
     expect(within(towns).queryByRole("link", { name: /Parzonería/ })).not.toBeInTheDocument()
   })
 
@@ -68,8 +69,31 @@ describe("maps", () => {
     expect(container.querySelectorAll("svg[aria-label='Herrien mapa: Araba'] path").length).toBeGreaterThan(50)
   })
 
+  it("names the capital and the biggest towns on the map, without making them links or tab stops", async () => {
+    const { container } = renderRoute("/gipuzkoa")
+    await map("Herrien mapa: Gipuzkoa")
+
+    const labels = container.querySelector("[data-testid='map-labels']")!
+    expect(labels).toHaveAttribute("aria-hidden")
+    const names = [...labels.querySelectorAll("text")].map((text) => text.textContent)
+    expect(names[0]).toBe("Donostia")
+    expect(names).toEqual(expect.arrayContaining(["Irun"]))
+    expect(names.length).toBeLessThan(40)
+  })
+
+  it("draws the rivers and the ría over the municipalities", async () => {
+    const { container } = renderRoute("/bizkaia")
+    await map("Herrien mapa: Bizkaia")
+
+    const water = container.querySelector("[data-testid='map-water']")!
+    expect(water).toHaveAttribute("aria-hidden")
+    expect(water.querySelectorAll("path.stroke-\\[3\\]").length).toBeGreaterThan(0)
+    expect(water.querySelectorAll("path").length).toBeGreaterThan(10)
+  })
+
   it("shows the data attribution", async () => {
     renderRoute("/")
     expect(screen.getByText(/© IGN\/CNIG \(CC BY 4\.0\)/)).toBeInTheDocument()
+    expect(screen.getByText(/© OpenStreetMap/)).toBeInTheDocument()
   })
 })

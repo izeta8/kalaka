@@ -126,6 +126,19 @@ Navigation by a real map of the official boundaries, drawn as SVG with d3-geo
 - Lapurdi, Nafarroa Beherea and Zuberoa are historical provinces, not
   administrative units: each is drawn as the union of its communes, from a
   reviewable assignment file with its sources.
+- **Water** (owner's request, 2026-10-02): the main rivers (named courses of at
+  least 14 km; 60 km on the overview) as thin lines, the rías as thicker lines
+  (OpenStreetMap maps them as river lines because its coastline runs up the
+  estuary), and reservoirs, lakes and wide rivers as surfaces. A water colour of
+  its own (`--map-water`), bluer than the brand. Not interactive.
+- **Names on the map**, calm on purpose: small text with a soft halo of the page
+  colour, never a link or a tab stop (the regions already are). Herrialdeak are
+  always named on the overview. On a province map the capital goes first and a
+  little bigger, then municipalities by population; a name is drawn only if it
+  fits inside its municipality and touches no other name. Towns of 20,000+
+  people may stick out of their (often small) municipality. Sizes are kept in
+  screen pixels, so a phone shows fewer names, not smaller ones. Towns use the
+  API's name; other municipalities their Basque name.
 
 Data and licences (attributed in the footer):
 
@@ -133,6 +146,8 @@ Data and licences (attributed in the footer):
 |---|---|---|
 | Araba, Bizkaia, Gipuzkoa, Nafarroa | IGN/CNIG, INSPIRE WFS "Unidades administrativas" (full-resolution municipalities, INE codes); `es-atlas` only to place shared land in its province | CC BY 4.0 |
 | Lapurdi, Nafarroa Beherea, Zuberoa | IGN France Admin Express through geo.api.gouv.fr (Etalab), communes of département 64 (INSEE codes) | Licence Ouverte 2.0 |
+| Rivers, rías, lakes | OpenStreetMap through the Overpass API | ODbL |
+| Population and Basque names (labels) | Wikidata SPARQL, by INE / INSEE code | CC0 |
 
 `scripts/build-maps.mjs` builds the maps into `src/data/maps/` (TopoJSON, one
 file per screen, lazy-loaded) and the table that links each town of the API

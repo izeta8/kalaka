@@ -31,6 +31,8 @@
   --border: #dce3e6;
   --input: #dce3e6;
   --ring: #0f4c5c;
+  /* Rivers, rías and lakes on the maps: bluer than the petrol brand, so water never reads as land */
+  --map-water: #4f9fc4;
 }
 
 .dark {
@@ -55,6 +57,7 @@
   --border: #24363e;
   --input: #24363e;
   --ring: #4fa3b8;
+  --map-water: #3f93bd;
 }
 
 @theme inline {
@@ -85,6 +88,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-map-water: var(--map-water);
 }
 
 @layer base {

@@ -30,7 +30,7 @@ describe("town ↔ municipality table", () => {
     expect(table.map((entry) => entry.slug).sort()).toEqual(towns.map((town) => town.slug).sort())
     if (towns.length === 0) return
 
-    const features = (await loadMap(province)) ?? []
+    const features = (await loadMap(province))?.regions ?? []
     for (const entry of table) {
       const polygons = features.filter((feature) => feature.properties.code === entry.code && !feature.properties.shared)
       expect(polygons, `${province}/${entry.slug} → ${entry.code}`).toHaveLength(1)
@@ -44,7 +44,7 @@ describe("town ↔ municipality table", () => {
     const missing = []
     for (const province of ["gipuzkoa", "bizkaia"]) {
       const codes = new Set(townMunicipalities(province).map((entry) => entry.code))
-      const municipalities = ((await loadMap(province)) ?? []).filter((feature) => !feature.properties.shared)
+      const municipalities = ((await loadMap(province))?.regions ?? []).filter((feature) => !feature.properties.shared)
       missing.push(...municipalities.filter((feature) => !codes.has(feature.properties.code)).map((feature) => feature.properties.name))
     }
     expect(missing).toEqual(knownGaps)
@@ -53,13 +53,28 @@ describe("town ↔ municipality table", () => {
 
 describe("map data", () => {
   it.each(["euskal-herria", ...provinces])("%s: every shape is wound for d3-geo (no globe-sized polygons)", async (name) => {
-    const features = await loadMap(name)
-    if (!features) return // Iparralde maps are built only once their sources exist.
-    for (const feature of features) expect(geoArea(feature), feature.properties.name).toBeLessThan(0.01)
+    const map = await loadMap(name)
+    expect(map, `no map for ${name}`).not.toBeNull()
+    for (const feature of [...map!.regions, ...map!.water]) expect(geoArea(feature), feature.properties.name).toBeLessThan(0.01)
   })
 
-  it("has the four herrialdeak of Hegoalde", async () => {
-    const features = (await loadMap("euskal-herria")) ?? []
-    expect(features.map((feature) => feature.properties.code)).toEqual(expect.arrayContaining(["gipuzkoa", "bizkaia", "araba", "nafarroa"]))
+  it("has the seven herrialdeak, each with a point to anchor its name", async () => {
+    const regions = (await loadMap("euskal-herria"))?.regions ?? []
+    expect(regions.map((feature) => feature.properties.code).sort()).toEqual(
+      ["araba", "bizkaia", "gipuzkoa", "lapurdi", "nafarroa", "nafarroa-beherea", "zuberoa"].sort(),
+    )
+    for (const feature of regions) expect(feature.properties.label, feature.properties.code).toHaveLength(2)
+  })
+
+  it("gives municipalities their population and Basque name, and marks the capitals", async () => {
+    const bizkaia = (await loadMap("bizkaia"))?.regions ?? []
+    const bilbao = bizkaia.find((feature) => feature.properties.code === "48020")
+    expect(bilbao?.properties).toMatchObject({ basqueName: "Bilbo", capital: true })
+    expect(bilbao?.properties.population).toBeGreaterThan(300_000)
+  })
+
+  it("draws the ría of Bilbao", async () => {
+    const rivers = (await loadMap("bizkaia"))?.rivers ?? []
+    expect(rivers.some((river) => river.properties.kind === "estuary" && river.properties.name === "Bilboko itsasadarra")).toBe(true)
   })
 })
