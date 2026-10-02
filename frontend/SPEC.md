@@ -116,8 +116,13 @@ Navigation by a real map of the official boundaries, drawn as SVG with d3-geo
 - Accessibility: map regions that are links are focusable, named and open with
   Enter; under the map there is always a list (searchable on the province page,
   accent-insensitive), with a skip link from the map to it.
-- Boundaries are the administrative ones: enclaves of other provinces (Trebiñu
-  and La Puebla de Arganzón in Araba, Valle de Villaverde in Bizkaia) are holes.
+- Boundaries are the official ones, at full IGN resolution simplified to about
+  20 m (80 m on the Euskal Herria overview). One exception, decided by the owner
+  on 2026-10-02: **Trebiñu and La Puebla de Arganzón** (Burgos) are drawn inside
+  Araba, as muted municipalities, so Araba has no hole. Other enclaves (Valle
+  de Villaverde, Cantabria, inside Bizkaia) stay outside.
+- A municipality that exists but is not in the API's seed (Usansolo, split from
+  Galdakao in 2022) is drawn muted until the seed has it.
 - Lapurdi, Nafarroa Beherea and Zuberoa are historical provinces, not
   administrative units: each is drawn as the union of its communes, from a
   reviewable assignment file with its sources.
@@ -126,7 +131,7 @@ Data and licences (attributed in the footer):
 
 | Area | Source | Licence |
 |---|---|---|
-| Araba, Bizkaia, Gipuzkoa, Nafarroa | IGN/CNIG "Líneas límite municipales", through the `es-atlas` package (INE codes) | CC BY 4.0 |
+| Araba, Bizkaia, Gipuzkoa, Nafarroa | IGN/CNIG, INSPIRE WFS "Unidades administrativas" (full-resolution municipalities, INE codes); `es-atlas` only to place shared land in its province | CC BY 4.0 |
 | Lapurdi, Nafarroa Beherea, Zuberoa | IGN France Admin Express through geo.api.gouv.fr (Etalab), communes of département 64 (INSEE codes) | Licence Ouverte 2.0 |
 
 `scripts/build-maps.mjs` builds the maps into `src/data/maps/` (TopoJSON, one

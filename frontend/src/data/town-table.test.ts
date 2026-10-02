@@ -38,12 +38,16 @@ describe("town ↔ municipality table", () => {
     expect(new Set(table.map((entry) => entry.code)).size, "two towns share a municipality").toBe(table.length)
   })
 
-  it("leaves no municipality of Gipuzkoa or Bizkaia without its town", async () => {
+  it("leaves no municipality of Gipuzkoa or Bizkaia without its town, except the known gaps of the seed", async () => {
+    // Usansolo (48916) split from Galdakao in 2022 and is not in the API's seed yet: drawn, not a link.
+    const knownGaps = ["Usansolo"]
+    const missing = []
     for (const province of ["gipuzkoa", "bizkaia"]) {
       const codes = new Set(townMunicipalities(province).map((entry) => entry.code))
       const municipalities = ((await loadMap(province)) ?? []).filter((feature) => !feature.properties.shared)
-      expect(municipalities.filter((feature) => !codes.has(feature.properties.code)).map((feature) => feature.properties.name)).toEqual([])
+      missing.push(...municipalities.filter((feature) => !codes.has(feature.properties.code)).map((feature) => feature.properties.name))
     }
+    expect(missing).toEqual(knownGaps)
   })
 })
 

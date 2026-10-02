@@ -1,13 +1,16 @@
 // Builds the TopoJSON maps of Euskal Herria and the town ↔ municipality table.
 //
-// Sources (see SPEC.md, "Maps"):
-// - Hegoalde: es-atlas (node_modules/es-atlas/es/municipalities.json), built from IGN/CNIG
-//   "Líneas límite municipales", CC BY 4.0. Ids are INE codes. Already simplified and quantized
-//   upstream (simplification 1e-4, quantization 1e4 over Spain: ~180 m grid); used as is.
-// - Iparralde: communes of département 64 from geo.api.gouv.fr (IGN France / Etalab, Licence Ouverte),
-//   downloaded by download-map-sources.mjs, grouped into the three historical provinces by
-//   scripts/data/iparralde-provinces.json. Skipped (with a warning) until both exist.
+// Sources (see SPEC.md, "Maps"), downloaded by download-map-sources.mjs into scripts/sources/:
+// - Hegoalde: IGN/CNIG INSPIRE WFS "Unidades administrativas" (CC BY 4.0), full-resolution municipalities with
+//   their INE code. Araba includes the Burgos enclaves of Trebiñu and La Puebla de Arganzón (owner's decision,
+//   2026-10-02: drawn inside Araba, never as a hole). Shared land (INE 53xxx) goes to the province that holds it,
+//   decided with the province outlines of es-atlas (only used for that).
+// - Iparralde: communes of département 64 from geo.api.gouv.fr (IGN France / Etalab, Licence Ouverte), grouped into
+//   the three historical provinces by scripts/data/iparralde-provinces.json.
 // - Towns: postgres/initdb/03-provinces.sql and 04-towns.sql (read-only), the API's seed.
+//
+// All municipalities are simplified together, so neighbours keep one shared border, and every herrialde is the
+// union of its municipalities: the province map and the Euskal Herria map have exactly the same borders.
 //
 // Output (committed): src/data/maps/euskal-herria.topo.json (the 7 herrialdeak),
 // src/data/maps/<provinceSlug>.topo.json (its municipalities), src/data/town-municipalities.json.
@@ -23,12 +26,15 @@ const FRONTEND = path.resolve(import.meta.dirname, "..")
 const OUT_DIR = path.join(FRONTEND, "src/data/maps")
 const TABLE_FILE = path.join(FRONTEND, "src/data/town-municipalities.json")
 const ES_ATLAS = path.join(FRONTEND, "node_modules/es-atlas/es/municipalities.json")
+const IGN_HEGOALDE = path.join(import.meta.dirname, "sources/ign-hegoalde.geojson")
 const DEP64 = path.join(import.meta.dirname, "sources/dep64-communes.geojson")
 const IPARRALDE = path.join(import.meta.dirname, "data/iparralde-provinces.json")
 const SEED = path.resolve(FRONTEND, "../postgres/initdb")
 
-/** Hegoalde: province slug (as in the API) → INE province code. */
-const HEGOALDE = { gipuzkoa: "20", bizkaia: "48", araba: "01", nafarroa: "31" }
+/** Hegoalde: INE province code → province slug (as in the API). */
+const HEGOALDE = { 20: "gipuzkoa", 48: "bizkaia", "01": "araba", 31: "nafarroa" }
+/** Burgos municipalities drawn inside Araba: Condado de Treviño (Trebiñu) and La Puebla de Arganzón. */
+const ENCLAVES_IN_ARABA = new Set(["09109", "09276"])
 /** Names as the API has them. */
 const NAMES = {
   gipuzkoa: "Gipuzkoa",
@@ -41,54 +47,113 @@ const NAMES = {
 }
 /** Towns whose name does not match the official one by rule. Keep this list short and reviewed. */
 const MANUAL_MATCHES = { "bizkaia/bilbo": "48020" } // Bilbo → INE "Bilbao"
-/** Iparralde communes are simplified to about this precision (metres), similar to the es-atlas grid. */
-const IPARRALDE_SIMPLIFY_METRES = 50
+/** Simplification of every border, in metres: close to the real line at the zoom of a province map. */
+const SIMPLIFY_METRES = 20
+/** The Euskal Herria map is drawn much smaller than a province map: its outlines can be coarser. */
+const OVERVIEW_SIMPLIFY_METRES = 80
 
 const QUANTIZATION = 1e5
 
 // ---------------------------------------------------------------- sources
 
-const atlas = JSON.parse(readFileSync(ES_ATLAS, "utf8"))
-const spainProvinces = topojson.feature(atlas, atlas.objects.provinces).features
-const spainMunicipalities = topojson.feature(atlas, atlas.objects.municipalities).features
-
-const herrialdeak = [] // features with id = province slug
-const municipalitiesByProvince = {} // province slug → features with id = official code
-
-for (const [slug, code] of Object.entries(HEGOALDE)) {
-  const province = spainProvinces.find((feature) => feature.id === code)
-  herrialdeak.push(feature(slug, { name: NAMES[slug] }, province.geometry))
-  municipalitiesByProvince[slug] = spainMunicipalities
-    .filter((municipality) => {
-      if (municipality.id.startsWith(code)) return true
-      // Shared land (parzonerías, facerías, Bardenas Reales…): INE codes 53xxx, drawn in the province that holds it.
-      return municipality.id.startsWith("53") && geoContains(province, geoCentroid(municipality))
-    })
-    .map((municipality) => feature(municipality.id, sharedLand(municipality, code), municipality.geometry))
+if (!existsSync(IGN_HEGOALDE) || !existsSync(DEP64)) {
+  throw new Error("Map sources missing: run `npm run maps:download` first")
 }
 
-const iparralde = readIparralde()
-if (iparralde) {
-  for (const [slug, communes] of Object.entries(iparralde)) {
-    municipalitiesByProvince[slug] = communes
-    herrialdeak.push(...(await dissolve(slug, communes)))
-  }
-} else {
-  console.warn("! Iparralde skipped: run `npm run maps:download` and fill scripts/data/iparralde-provinces.json")
+const atlas = JSON.parse(readFileSync(ES_ATLAS, "utf8"))
+const atlasProvinces = topojson.feature(atlas, atlas.objects.provinces).features
+
+const municipalities = [...readHegoalde(), ...readIparralde()]
+const { simplified, outlines } = await simplifyAndDissolve(municipalities)
+
+const herrialdeak = Object.keys(NAMES).map((slug) => {
+  const outline = outlines.find((candidate) => candidate.province === slug)
+  if (!outline) throw new Error(`No outline for ${slug}`)
+  return feature(slug, { name: NAMES[slug] }, outline.geometry)
+})
+const municipalitiesByProvince = {} // province slug → features with id = official code
+for (const municipality of simplified) {
+  const { code, name, province, shared } = municipality.properties
+  ;(municipalitiesByProvince[province] ??= []).push(feature(code, shared ? { name, shared } : { name }, municipality.geometry))
 }
 
 // ---------------------------------------------------------------- output
 
 await mkdir(OUT_DIR, { recursive: true })
 await writeTopology("euskal-herria", "herrialdeak", herrialdeak)
-for (const [slug, features] of Object.entries(municipalitiesByProvince)) await writeTopology(slug, "municipalities", features)
+for (const slug of Object.keys(NAMES)) await writeTopology(slug, "municipalities", municipalitiesByProvince[slug])
 await writeTownTable()
 
 // ---------------------------------------------------------------- helpers
 
-function sharedLand(municipality, provinceCode) {
-  const shared = !municipality.id.startsWith(provinceCode)
-  return shared ? { name: municipality.properties.name, shared } : { name: municipality.properties.name }
+function readHegoalde() {
+  const result = []
+  let shared = 0
+  for (const unit of JSON.parse(readFileSync(IGN_HEGOALDE, "utf8")).features) {
+    const { code, name } = unit.properties
+    const geometry = rewind(code, unit.geometry)
+    let province = HEGOALDE[code.slice(0, 2)]
+    if (ENCLAVES_IN_ARABA.has(code)) province = "araba"
+    let isShared = false
+    if (code.startsWith("53")) {
+      // Shared land (parzonerías, facerías, Bardenas Reales…): drawn in the province that holds its centre.
+      const centre = geoCentroid({ type: "Feature", geometry })
+      const holder = Object.entries(HEGOALDE).find(([ine]) =>
+        geoContains(
+          atlasProvinces.find((candidate) => candidate.id === ine),
+          centre,
+        ),
+      )
+      if (!holder) continue // shared land of Burgos, La Rioja or Aragón inside the download box
+      province = holder[1]
+      isShared = true
+      shared++
+    }
+    if (!province) continue
+    result.push({ type: "Feature", properties: { code, name, province, shared: isShared }, geometry })
+  }
+  console.log(`Hegoalde: ${result.length} municipalities (${shared} shared land, Trebiñu and La Puebla in Araba)`)
+  return result
+}
+
+function readIparralde() {
+  const assignment = JSON.parse(readFileSync(IPARRALDE, "utf8"))
+  const source = JSON.parse(readFileSync(DEP64, "utf8")).features
+  const seen = new Set()
+  const result = []
+  for (const [slug, communes] of Object.entries(assignment.provinces)) {
+    if (communes.length === 0) throw new Error(`${slug}: no communes in ${path.relative(FRONTEND, IPARRALDE)}`)
+    for (const { code, name } of communes) {
+      const commune = source.find((candidate) => candidate.properties.code === code)
+      if (!commune) throw new Error(`${slug}: no commune with INSEE code ${code} (${name}) in the source`)
+      if (commune.properties.nom !== name) throw new Error(`${slug}: ${code} is "${commune.properties.nom}" in the source, not "${name}"`)
+      if (seen.has(code)) throw new Error(`${code} (${name}) is assigned to more than one province`)
+      seen.add(code)
+      result.push({ type: "Feature", properties: { code, name, province: slug, shared: false }, geometry: rewind(code, commune.geometry) })
+    }
+  }
+  console.log(`Iparralde: ${seen.size} communes`)
+  return result
+}
+
+/** Simplifies every municipality at once (shared borders stay shared) and dissolves them into herrialdeak. */
+async function simplifyAndDissolve(features) {
+  const commands = [
+    "-i all.json",
+    `-simplify interval=${SIMPLIFY_METRES} keep-shapes`,
+    "-o simplified.json format=geojson",
+    "-dissolve province",
+    `-simplify interval=${OVERVIEW_SIMPLIFY_METRES} keep-shapes`,
+    "-o outlines.json format=geojson",
+  ].join(" ")
+  const out = await mapshaper.applyCommands(commands, { "all.json": { type: "FeatureCollection", features } })
+  return {
+    simplified: JSON.parse(out["simplified.json"]).features,
+    outlines: JSON.parse(out["outlines.json"]).features.map((outline) => ({
+      province: outline.properties.province,
+      geometry: outline.geometry,
+    })),
+  }
 }
 
 function feature(id, properties, geometry) {
@@ -96,59 +161,18 @@ function feature(id, properties, geometry) {
 }
 
 /**
- * d3-geo reads polygons by winding order: a wrongly wound one covers the rest of the globe. The upstream
- * simplification leaves a few tiny polygons collapsed and inverted (e.g. a sliver of Ataun, Facería de Aldape);
- * they are turned around instead of dropped, so no land goes missing.
+ * d3-geo reads polygons by winding order: a ring wound the other way covers the rest of the globe. The French
+ * source follows RFC 7946 (the opposite of d3), and simplification can collapse and invert tiny slivers; such
+ * polygons are turned around instead of dropped, so no land goes missing.
  */
 function rewind(id, geometry) {
   const fix = (polygon) => {
     if (geoArea({ type: "Polygon", coordinates: polygon }) <= 2 * Math.PI) return polygon
-    console.log(`  rewound an inverted polygon of ${id}`)
     return polygon.map((ring) => [...ring].reverse())
   }
   if (geometry.type === "Polygon") return { ...geometry, coordinates: fix(geometry.coordinates) }
   if (geometry.type === "MultiPolygon") return { ...geometry, coordinates: geometry.coordinates.map(fix) }
   return geometry
-}
-
-function readIparralde() {
-  if (!existsSync(DEP64)) return null
-  const assignment = JSON.parse(readFileSync(IPARRALDE, "utf8"))
-  const entries = Object.entries(assignment.provinces)
-  if (entries.every(([, communes]) => communes.length === 0)) return null
-
-  const source = JSON.parse(readFileSync(DEP64, "utf8")).features
-  const seen = new Set()
-  const result = {}
-  for (const [slug, communes] of entries) {
-    result[slug] = communes.map(({ code, name }) => {
-      const commune = source.find((candidate) => candidate.properties.code === code)
-      if (!commune) throw new Error(`${slug}: no commune with INSEE code ${code} (${name}) in the source`)
-      if (commune.properties.nom !== name) throw new Error(`${slug}: ${code} is "${commune.properties.nom}" in the source, not "${name}"`)
-      if (seen.has(code)) throw new Error(`${code} (${name}) is assigned to more than one province`)
-      seen.add(code)
-      return feature(code, { name }, commune.geometry)
-    })
-  }
-  console.log(`Iparralde: ${seen.size} communes`)
-  return result
-}
-
-/** Simplifies a province's communes in place and returns its outline as one feature. */
-async function dissolve(slug, communes) {
-  const input = { type: "FeatureCollection", features: communes }
-  const commands = `-i in.json -simplify interval=${IPARRALDE_SIMPLIFY_METRES} keep-shapes -o communes.json format=geojson -dissolve -o outline.json format=geojson`
-  const out = await mapshaper.applyCommands(commands, { "in.json": input })
-  const simplified = JSON.parse(out["communes.json"]).features
-  communes.splice(
-    0,
-    communes.length,
-    ...simplified.map((commune) => feature(commune.properties.code, { name: commune.properties.name }, commune.geometry)),
-  )
-  // -dissolve without fields drops the attributes, so mapshaper writes a GeometryCollection, not features
-  const outline = JSON.parse(out["outline.json"])
-  const geometry = outline.features ? outline.features[0].geometry : outline.geometries[0]
-  return [feature(slug, { name: NAMES[slug] }, geometry)]
 }
 
 async function writeTopology(name, object, features) {
