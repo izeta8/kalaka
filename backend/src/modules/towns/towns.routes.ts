@@ -28,7 +28,14 @@ townsRouter.get("/", async (req: Request, res: Response) => {
 townsRouter.post("/:townSlug/posts", async (req: Request, res: Response) => {
   const authorId = 1 // Simluates the cookie or session. Authentication is not implemented yet.
 
-  // Validate route parameter
+  // Validate route parameters
+  const parsedProvinceSlug = SlugSchema.safeParse(req.params.provinceSlug)
+  if (!parsedProvinceSlug.success) {
+    res.status(400).send({ error: "the slug must be a valid province name slug" })
+    return
+  }
+  const provinceSlug = parsedProvinceSlug.data
+
   const parsedTownSlug = SlugSchema.safeParse(req.params.townSlug)
   if (!parsedTownSlug.success) {
     res.status(400).send({ error: "the slug must be a valid town slug" })
@@ -44,7 +51,7 @@ townsRouter.post("/:townSlug/posts", async (req: Request, res: Response) => {
   }
   const { content, replyToPostSlug }: PostRequestData = parsedRequestBody.data
 
-  const result = await postsService.publishPost(content, replyToPostSlug, townSlug, authorId)
+  const result = await postsService.publishPost(content, replyToPostSlug, provinceSlug, townSlug, authorId)
 
   // Handle errors
   if (!result.ok) {

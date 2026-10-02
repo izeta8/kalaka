@@ -11,11 +11,14 @@ export const findTownsOfProvince = async (provinceId: number): Promise<TownRow[]
   return await database.query<TownRow>(queryString, [provinceId])
 }
 
-export const findTown = async (slug: string): Promise<TownRow[]> => {
+// A town slug is only unique inside its province (towns_unique_slug_plus_province_id)
+export const findTownBySlugs = async (provinceSlug: string, townSlug: string): Promise<TownRow | null> => {
   const queryString = `
-        SELECT *
+        SELECT towns.*
         FROM towns
-        WHERE slug = $1`
+        JOIN provinces ON provinces.id = towns.province_id
+        WHERE provinces.slug = $1 AND towns.slug = $2`
 
-  return await database.query<TownRow>(queryString, [slug])
+  const townRows = await database.query<TownRow>(queryString, [provinceSlug, townSlug])
+  return townRows.length > 0 ? townRows[0] : null
 }

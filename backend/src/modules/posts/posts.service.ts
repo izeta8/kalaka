@@ -1,6 +1,6 @@
 import { customAlphabet } from "nanoid"
 import { DatabaseError } from "pg"
-import * as townsService from "../towns/towns.service.ts"
+import * as townsRepository from "../towns/towns.repository.ts"
 import * as usersRepository from "../users/users.repository.ts"
 import * as usersService from "../users/users.service.ts"
 import type { UserRow } from "../users/users.types.ts"
@@ -12,6 +12,7 @@ type Result<T, E extends string> = { ok: true; value: T } | { ok: false; error: 
 export const publishPost = async (
   content: string,
   replyToPostSlug: string,
+  provinceSlug: string,
   townSlug: string,
   authorId: number,
 ): Promise<Result<PostPublic, "author-not-found" | "town-not-found" | "reply-to-not-found">> => {
@@ -22,8 +23,9 @@ export const publishPost = async (
   }
   // The authentication will be implemented soon. We are just mocking insecurely...
 
-  // Check if town exists, if so, link the roomId of the town with the post
-  const town = await townsService.getTownBySlug(townSlug)
+  // Check if town exists, if so, link the roomId of the town with the post.
+  // A town slug is only unique inside its province, so both slugs are needed to find the town
+  const town = await townsRepository.findTownBySlugs(provinceSlug, townSlug)
   if (town === null) {
     return { ok: false, error: "town-not-found" }
   }
