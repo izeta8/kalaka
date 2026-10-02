@@ -32,17 +32,18 @@ export interface PostInsert {
   // quoteToId: number | null
 }
 
+// The post a reply points to: only what the UI needs to show "replying to <display name> (@username)" and link to it
+export interface PostReference {
+  slug: string
+  author: Pick<UserPublic, "username" | "displayName">
+}
+
 export interface PostPublic {
   slug: string
-  content: string
+  content: string | null // null when the post has been deleted
   author: UserPublic
   replyTo: PostReference | null
   createdAt: Date
   deletedAt: Date | null
-  // quoteToPost: PostPublic | null
-}
-
-export interface PostReference {
-  slug: string
-  author: UserPublic
+  // quoteTo: PostReference | null
 }

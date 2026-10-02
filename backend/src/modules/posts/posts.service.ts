@@ -6,7 +6,7 @@ import * as usersRepository from "../users/users.repository.ts"
 import * as usersService from "../users/users.service.ts"
 import type { UserRow } from "../users/users.types.ts"
 import * as postsRepository from "./posts.repository.ts"
-import type { PostInsert, PostPublic, PostReference, PostRequestData, PostRow } from "./posts.types.ts"
+import type { PostInsert, PostPublic, PostRequestData, PostRow } from "./posts.types.ts"
 
 export type Result<T, E extends string> = { ok: true; value: T } | { ok: false; error: E }
 
@@ -95,24 +95,18 @@ const publishPostInRoom = async (
   return { ok: true, value: postPublic }
 }
 
-export const privateToPublicPost = (privatePost: PostRow, privateAuthor: UserRow, replyTo: ReplyToData | null): PostPublic => {
-  const publicAuthor = usersService.privateToPublicUser(privateAuthor)
-
-  const postReference: PostReference | null =
-    replyTo === null
-      ? null
-      : {
-          slug: replyTo.post.slug,
-          author: replyTo.author,
-        }
-
+// Pure mapping from database rows to the public shape: no queries, no internal ids
+export const privateToPublicPost = (post: PostRow, author: UserRow, replyTo: ReplyToData | null): PostPublic => {
   return {
-    slug: privatePost.slug,
-    content: privatePost.content,
-    author: publicAuthor,
-    replyTo: postReference,
-    createdAt: privatePost.createdAt,
-    deletedAt: privatePost.deletedAt,
+    slug: post.slug,
+    content: post.deletedAt === null ? post.content : null,
+    author: usersService.privateToPublicUser(author),
+    replyTo:
+      replyTo === null
+        ? null
+        : { slug: replyTo.post.slug, author: { displayName: replyTo.author.displayName, username: replyTo.author.username } },
+    createdAt: post.createdAt,
+    deletedAt: post.deletedAt,
   }
 }
 
