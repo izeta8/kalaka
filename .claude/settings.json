@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(//home/izeta/Documents/kalaka/backend/**)",
+      "Edit(//home/izeta/Documents/kalaka/postgres/**)"
+    ]
+  }
+}
