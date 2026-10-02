@@ -15,6 +15,12 @@ export type PublishPostError = "author-not-found" | "province-not-found" | "town
 // What the route passes to the service: the validated body plus who is posting
 export type NewPost = PostRequestData & { authorId: number }
 
+// A replied post always travels with its author: one cannot exist here without the other
+interface ReplyToData {
+  post: PostRow
+  author: UserRow
+}
+
 // How many random slugs to try when creating a post before giving up.
 // Each collision with an existing post slug uses one attempt.
 const MAX_POST_SLUG_ATTEMPTS = 4
@@ -58,44 +64,47 @@ const publishPostInRoom = async (
     return { ok: false, error: "author-not-found" }
   }
 
-  // If replyTo is not empty, check if the post exists and add to the insert object
-  let replyToPost: PostRow | null = null
+  // If the post is a reply, the replied post must exist
+  let replyTo: ReplyToData | null = null
   if (replyToPostSlug !== null) {
-    replyToPost = await postsRepository.findPostBySlug(replyToPostSlug)
-    if (replyToPost === null) {
+    const repliedPost = await postsRepository.findPostBySlug(replyToPostSlug)
+    if (repliedPost === null) {
       return { ok: false, error: "reply-to-not-found" }
     }
+
+    // posts.author_id is NOT NULL and references users, so a post without author is a bug
+    const repliedPostAuthor = await usersRepository.findUserById(repliedPost.authorId)
+    if (repliedPostAuthor === null) {
+      throw new Error(`author of post ${repliedPost.slug} not found (authorId: ${repliedPost.authorId})`)
+    }
+
+    replyTo = { post: repliedPost, author: repliedPostAuthor }
   }
 
   const postInsertData: Omit<PostInsert, "slug"> = {
     content: content,
     authorId: authorId,
     roomId: roomId,
-    replyToId: replyToPost?.id || null,
+    replyToId: replyTo?.post.id || null,
   }
 
   const post = await createPostWithUniqueSlug(postInsertData)
 
-  const postPublic = privateToPublicPost(post, author, replyToPost)
+  const postPublic = privateToPublicPost(post, author, replyTo)
 
   return { ok: true, value: postPublic }
 }
 
-export const privateToPublicPost = (
-  privatePost: PostRow,
-  privateAuthor: UserRow,
-  replyPost: PostRow | null,
-  replyPostAuthor: UserRow | null,
-): PostPublic => {
+export const privateToPublicPost = (privatePost: PostRow, privateAuthor: UserRow, replyTo: ReplyToData | null): PostPublic => {
   const publicAuthor = usersService.privateToPublicUser(privateAuthor)
 
   const postReference: PostReference | null =
-    replyPost && replyPostAuthor
-      ? {
-          slug: replyPost.slug,
-          author: replyPostAuthor,
+    replyTo === null
+      ? null
+      : {
+          slug: replyTo.post.slug,
+          author: replyTo.author,
         }
-      : null
 
   return {
     slug: privatePost.slug,
