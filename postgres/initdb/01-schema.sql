@@ -154,3 +154,17 @@ CREATE TABLE retired_usernames (
     created_at timestamptz NOT NULL DEFAULT now()
 );
 
+-- ###################################################
+
+CREATE TABLE sessions (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    session_hash TEXT NOT NULL UNIQUE,
+    user_id BIGINT NOT NULL references users ON DELETE CASCADE,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    expires_at timestamptz NOT NULL,
+
+    CONSTRAINT sessions_hash_format CHECK (session_hash ~ '^[a-f0-9]{64}$')
+);
+
+CREATE INDEX sessions_user_id_idx 
+ON sessions(user_id);
