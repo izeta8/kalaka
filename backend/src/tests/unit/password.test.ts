@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { before, describe, it } from "node:test"
-import { hashPassword } from "../../modules/auth/password.ts"
+import { hashPassword, verifyPassword } from "../../modules/auth/password.ts"
 
 const PASSWORD = "Gq)t9[gI05"
 
@@ -37,23 +37,22 @@ describe("verifyPassword", () => {
     hash = await hashPassword(PASSWORD)
   })
 
-  it("returns true for the correct password", () => {})
+  it("returns true for the correct password", async () => {
+    const isValid = await verifyPassword(PASSWORD, hash)
+    assert.equal(isValid, true)
+  })
 
-  it("returns false for a wrong password", () => {})
+  it("returns false for a wrong password", async () => {
+    const incorrectPassword = PASSWORD + "_incorrect"
+    const isValid = await verifyPassword(incorrectPassword, hash)
+    assert.equal(isValid, false)
+  })
 
-  it("throws on a malformed stored hash", () => {})
+  it("throws on a malformed stored hash", async () => {
+    const malformedHash = "$malformed$hash"
+
+    await assert.rejects(verifyPassword(PASSWORD, malformedHash), {
+      message: 'malformed password hash: expected 5 "$"-separated parts, got 3',
+    })
+  })
 })
-
-// Si te sobra tiempo
-
-// 6. it("rejects a stored hash that asks for more memory than allowed")
-
-// Coge un hash válido y cámbiale N=131072 por N=1048576.
-// Qué compruebas: que se rechaza, y que no devuelve false.
-// Haz primero la prueba sin aserción sobre el error. Ejecútalo, mira qué error sale de verdad (no es uno de los tuyos) y después afírmalo. Responde en un comentario: ¿qué ataque evita maxmem?
-
-// 7. it("verifies a hash created with other parameters")
-
-// Construye a mano, dentro del test, un hash con otros parámetros (por ejemplo N=2¹⁴ y una clave de 64 bytes), con scryptSync de node:crypto y el mismo formato de texto. Así compruebas que verifyPassword lee los parámetros y la longitud del hash guardado, y no las constantes de hoy. Es lo que permitirá subir N en el futuro sin romper las contraseñas que ya existen.
-
-// Hecho cuando: del 1 al 5 están en verde con node --test src/tests/unit/password.test.ts, y después npm test también pasa entero. Si te quedas 20 minutos con el mismo error, pégamelo.
