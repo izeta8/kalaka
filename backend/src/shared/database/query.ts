@@ -1,3 +1,4 @@
+import type { PoolClient } from "pg"
 import { pool } from "./database.ts"
 
 type RawRow = Record<string, unknown>
@@ -22,4 +23,23 @@ const castObjectToCamelCase = (arr: Array<RawRow>) => {
     }
     return returnObject
   })
+}
+
+type TransactionCallback<T> = (client: PoolClient) => Promise<T>
+
+// https://node-postgres.com/features/transactions
+export async function withTransaction<T>(handleTransaction: TransactionCallback<T>): Promise<T> {
+  const client = await pool.connect()
+
+  try {
+    await client.query("BEGIN")
+    const response = await handleTransaction(client)
+    await client.query("COMMIT")
+    return response
+  } catch (e) {
+    await client.query("ROLLBACK")
+    throw e
+  } finally {
+    client.release()
+  }
 }
