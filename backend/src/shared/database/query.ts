@@ -1,11 +1,11 @@
-import type { PoolClient } from "pg"
+import type { Pool, PoolClient } from "pg"
 import { pool } from "./database.ts"
 
 type RawRow = Record<string, unknown>
 
-export async function query<T>(text: string, values?: unknown[]): Promise<T[]> {
+export async function query<T>(text: string, values?: unknown[], db: Pool | PoolClient = pool): Promise<T[]> {
   const queryConfig = { text, values }
-  const dbResponse = await pool.query<RawRow>(queryConfig)
+  const dbResponse = await db.query<RawRow>(queryConfig)
   return castObjectToCamelCase(dbResponse.rows) as T[]
 }
 
