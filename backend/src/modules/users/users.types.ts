@@ -13,3 +13,8 @@ export interface UserRow {
 }
 
 export type UserPublic = Pick<UserRow, "publicId" | "username" | "displayName" | "bio" | "avatarUrl">
+
+export interface RetiredUsernamesRow {
+  username: string
+  createdAt: Date
+}

@@ -1,5 +1,5 @@
 import { query, withTransaction } from "../../shared/database/query.ts"
-import type { UserRow } from "../users/users.types.ts"
+import type { RetiredUsernamesRow, UserRow } from "../users/users.types.ts"
 import type { PasswordRegistrationInsert } from "./auth.types.ts"
 
 export const insertUserWithPassword = async ({
@@ -34,4 +34,14 @@ export const insertUserWithPassword = async ({
   })
 
   return insertedUser
+}
+
+export const findRetiredUsername = async (username: string): Promise<RetiredUsernamesRow | null> => {
+  const selectQuery = `
+    SELECT * 
+    FROM retired_usernames
+    WHERE username = $1
+  `
+  const retiredUserArray = await query<RetiredUsernamesRow>(selectQuery, [username])
+  return retiredUserArray.length > 0 ? retiredUserArray[0] : null
 }

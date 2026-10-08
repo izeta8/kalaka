@@ -1,5 +1,6 @@
 import { customAlphabet } from "nanoid"
 import { DatabaseError } from "pg"
+import type { Result } from "../../shared/result.ts"
 import * as provincesRepository from "../provinces/provinces.repository.ts"
 import * as townsRepository from "../towns/towns.repository.ts"
 import * as usersRepository from "../users/users.repository.ts"
@@ -7,8 +8,6 @@ import * as usersService from "../users/users.service.ts"
 import type { UserRow } from "../users/users.types.ts"
 import * as postsRepository from "./posts.repository.ts"
 import type { PostInsert, PostPublic, PostRequestData, PostRow } from "./posts.types.ts"
-
-export type Result<T, E extends string> = { ok: true; value: T } | { ok: false; error: E }
 
 export type PublishPostError = "author-not-found" | "province-not-found" | "town-not-found"
 
@@ -103,7 +102,7 @@ export const privateToPublicPost = (post: PostRow, author: UserRow, replyTo: Rep
   return {
     slug: post.slug,
     content: post.deletedAt === null ? post.content : null,
-    author: usersService.privateToPublicUser(author),
+    author: usersService.toPublicUser(author),
     replyTo:
       replyTo === null
         ? null

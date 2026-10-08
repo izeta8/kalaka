@@ -1,3 +1,6 @@
+import type z from "zod"
+import type { RegisterRequestSchema } from "./auth.schemas.ts"
+
 export interface AuthAccountsRow {
   id: number
   userId: number
@@ -15,3 +18,5 @@ export interface PasswordRegistrationInsert {
   email: string
   passwordHash: string
 }
+
+export type RegisterRequestData = z.output<typeof RegisterRequestSchema>
