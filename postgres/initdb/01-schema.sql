@@ -102,6 +102,10 @@ CREATE TABLE auth_accounts (
     CONSTRAINT auths_accounts_unique_provider_user_id UNIQUE (provider, provider_user_id), -- avoid linking the same account to different users
     CONSTRAINT auths_accounts_unique_user_provider UNIQUE (user_id, provider),
     CONSTRAINT auths_accounts_providers_check CHECK (provider IN ('google', 'password')),
+    CONSTRAINT auths_accounts_password_hash_format CHECK (
+        password_hash IS NULL
+        OR password_hash ~ '^\$scrypt\$N=[0-9]+,r=[0-9]+,p=[0-9]+\$[A-Za-z0-9+/]+={0,2}\$[A-Za-z0-9+/]+={0,2}$'
+    ),
     CONSTRAINT auth_accounts_data_consistency CHECK (
         (
             provider = 'password' 
