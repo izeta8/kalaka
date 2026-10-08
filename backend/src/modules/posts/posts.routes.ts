@@ -1,9 +1,9 @@
 import { type Request, type Response, Router } from "express"
+import { type Result } from "../../shared/result.ts"
 import { SlugSchema } from "../towns/towns.schemas.ts"
 import { PostRequestSchema, PostSlugSchema } from "./posts.schemas.ts"
 import * as postsService from "./posts.service.ts"
 import type { PostPublic } from "./posts.types.ts"
-
 // Simulates the session. Authentication is not implemented yet.
 const MOCKED_AUTHOR_ID = 1
 
@@ -57,7 +57,7 @@ export const createProvincePost = async (req: Request, res: Response) => {
 // Translates the service result to an HTTP response. Both routes answer the same way.
 const sendPublishResult = (
   res: Response,
-  result: postsService.Result<PostPublic, postsService.PublishPostError>,
+  result: Result<PostPublic, postsService.PublishPostError>,
   { provinceSlug, townSlug }: { provinceSlug: string; townSlug?: string },
 ) => {
   if (result.ok) {
