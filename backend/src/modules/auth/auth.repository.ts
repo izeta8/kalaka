@@ -1,6 +1,6 @@
 import { query, withTransaction } from "../../shared/database/query.ts"
 import type { RetiredUsernamesRow, UserRow } from "../users/users.types.ts"
-import type { PasswordRegistrationInsert } from "./auth.types.ts"
+import type { PasswordRegistrationInsert, UserWithPasswordHash } from "./auth.types.ts"
 
 export const insertUserWithPassword = async ({
   publicId,
@@ -44,4 +44,19 @@ export const findRetiredUsername = async (username: string): Promise<RetiredUser
   `
   const retiredUserArray = await query<RetiredUsernamesRow>(selectQuery, [username])
   return retiredUserArray.length > 0 ? retiredUserArray[0] : null
+}
+
+export const findPasswordAccountByUsername = async (username: string): Promise<UserWithPasswordHash | null> => {
+  const queryString = `
+    SELECT u.*, ac.password_hash
+    FROM users u
+    INNER JOIN auth_accounts ac
+    ON u.id = ac.user_id
+    WHERE ac.provider = 'password'
+    AND u.username = $1
+  `
+
+  const usersArray = await query<UserWithPasswordHash>(queryString, [username])
+
+  return usersArray.length > 0 ? usersArray[0] : null
 }

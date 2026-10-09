@@ -1,7 +1,7 @@
 import assert from "node:assert/strict"
 import { randomBytes } from "node:crypto"
 import { after, describe, it } from "node:test"
-import { insertUserWithPassword } from "../../modules/auth/auth.repository.ts"
+import { findPasswordAccountByUsername, insertUserWithPassword } from "../../modules/auth/auth.repository.ts"
 import type { AuthAccountsRow, PasswordRegistrationInsert } from "../../modules/auth/auth.types.ts"
 import { pool } from "../../shared/database/database.ts"
 import { query } from "../../shared/database/query.ts"
@@ -70,5 +70,23 @@ describe("insertUserWithPassword", () => {
       constraint: "auths_accounts_password_hash_format",
     })
     assert.equal(await countUsersWithEmail(data.email), 0)
+  })
+})
+
+describe("findPasswordAccountByUsername", () => {
+  it("returns the user with its password hash", async () => {
+    const data = newUser()
+    const inserted = await insertUserWithPassword(data)
+
+    const found = await findPasswordAccountByUsername(data.username)
+
+    assert.ok(found)
+    assert.equal(found.id, inserted.id)
+    assert.equal(found.username, data.username)
+    assert.equal(found.passwordHash, data.passwordHash)
+  })
+
+  it("returns null for an unknown username", async () => {
+    assert.equal(await findPasswordAccountByUsername(newUser().username), null)
   })
 })
