@@ -2,7 +2,7 @@ import assert from "node:assert/strict"
 import { randomBytes } from "node:crypto"
 import { after, describe, it } from "node:test"
 import { RegisterRequestSchema } from "../../modules/auth/auth.schemas.ts"
-import { register } from "../../modules/auth/auth.service.ts"
+import { login, register } from "../../modules/auth/auth.service.ts"
 import type { RegisterRequestData } from "../../modules/auth/auth.types.ts"
 import { verifyPassword } from "../../modules/auth/password.ts"
 import { pool } from "../../shared/database/database.ts"
@@ -83,5 +83,33 @@ describe("register", () => {
 
     assert.equal(await verifyPassword(data.password, account.passwordHash), true)
     assert.equal(await verifyPassword("wrong password", account.passwordHash), false)
+  })
+})
+
+describe("login", () => {
+  it("returns the user for the right password", async () => {
+    const data = newRegistration()
+    await register(data)
+
+    const result = await login({ username: data.username, password: data.password })
+
+    assert.ok(result.ok)
+    assert.equal(result.value.username, data.username)
+  })
+
+  // Same error for both: the response must not reveal whether the username exists.
+  it("returns invalid-credentials for a wrong password", async () => {
+    const data = newRegistration()
+    await register(data)
+
+    const result = await login({ username: data.username, password: "wrong horse" })
+
+    assert.deepStrictEqual(result, { ok: false, error: "invalid-credentials" })
+  })
+
+  it("returns invalid-credentials for an unknown username", async () => {
+    const result = await login({ username: newRegistration().username, password: "correct horse" })
+
+    assert.deepStrictEqual(result, { ok: false, error: "invalid-credentials" })
   })
 })
