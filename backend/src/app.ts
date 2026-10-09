@@ -1,4 +1,5 @@
 import express, { type Express, type NextFunction, type Request, type Response } from "express"
+import { authRouter } from "./modules/auth/auth.routes.ts"
 import { postsRouter } from "./modules/posts/posts.routes.ts"
 import { provincesRouter } from "./modules/provinces/provinces.routes.ts"
 export const app: Express = express()
@@ -24,6 +25,7 @@ app.get("/health", async (_req: Request, res: Response) => {
 // Parse JSON bodies into req.body
 app.use(express.json())
 
+app.use("/auth", authRouter)
 app.use("/provinces", provincesRouter)
 app.use("/posts", postsRouter)
 
