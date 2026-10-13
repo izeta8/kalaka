@@ -38,3 +38,11 @@ export interface Session {
   token: string
   expiresAt: Date
 }
+
+export interface SessionRow {
+  id: number
+  sessionHash: string
+  userId: number
+  createdAt: Date
+  expiresAt: Date
+}

@@ -1,6 +1,6 @@
 import { query, withTransaction } from "../../shared/database/query.ts"
 import type { RetiredUsernamesRow, UserRow } from "../users/users.types.ts"
-import type { InsertSession, PasswordRegistrationInsert, UserWithPasswordHash } from "./auth.types.ts"
+import type { InsertSession, PasswordRegistrationInsert, SessionRow, UserWithPasswordHash } from "./auth.types.ts"
 
 export const insertUserWithPassword = async ({
   publicId,
@@ -68,4 +68,16 @@ export const insertSession = async ({ sessionHash, userId, expiresAt }: InsertSe
   `
 
   await query(insertString, [sessionHash, userId, expiresAt])
+}
+
+export const findValidSessionByHash = async (sessionHash: string): Promise<Pick<InsertSession, "userId"> | null> => {
+  const selectString = `
+    SELECT user_id
+    FROM sessions
+    WHERE session_hash = $1
+      AND expires_at > now()
+  `
+
+  const sessions = await query<Pick<SessionRow, "userId">>(selectString, [sessionHash])
+  return sessions.length > 0 ? sessions[0] : null
 }
