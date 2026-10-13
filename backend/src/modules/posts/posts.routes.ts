@@ -1,6 +1,6 @@
 import { type Request, type Response, Router } from "express"
 import { type Result } from "../../shared/result.ts"
-import { requireSession } from "../auth/auth.middleware.ts"
+import { getSessionUserId, requireSession } from "../auth/auth.middleware.ts"
 import { SlugSchema } from "../towns/towns.schemas.ts"
 import { PostRequestSchema, PostSlugSchema } from "./posts.schemas.ts"
 import * as postsService from "./posts.service.ts"
@@ -28,7 +28,7 @@ export const createTownPost = async (req: Request, res: Response) => {
 
   const result = await postsService.publishPostInTown(provinceSlug.data, townSlug.data, {
     ...body.data,
-    authorId: res.locals.userId as number,
+    authorId: getSessionUserId(req),
   })
 
   sendPublishResult(res, result, { provinceSlug: provinceSlug.data, townSlug: townSlug.data })
@@ -48,7 +48,7 @@ export const createProvincePost = async (req: Request, res: Response) => {
     return
   }
 
-  const result = await postsService.publishPostInProvince(provinceSlug.data, { ...body.data, authorId: res.locals.userId as number })
+  const result = await postsService.publishPostInProvince(provinceSlug.data, { ...body.data, authorId: getSessionUserId(req) })
 
   sendPublishResult(res, result, { provinceSlug: provinceSlug.data })
 }
@@ -95,7 +95,7 @@ export const createReply = async (req: Request, res: Response) => {
     return
   }
 
-  const result = await postsService.publishReply(postSlug.data, { ...body.data, authorId: res.locals.userId as number })
+  const result = await postsService.publishReply(postSlug.data, { ...body.data, authorId: getSessionUserId(req) })
 
   if (result.ok) {
     res.status(201).send(result.value)

@@ -14,8 +14,8 @@ after(async () => {
 })
 
 const app = express()
-app.get("/protected", requireSession, (_req, res) => {
-  res.status(200).send({ userId: res.locals.userId })
+app.get("/protected", requireSession, (req, res) => {
+  res.status(200).send({ userId: req.userId })
 })
 
 const createUserAndSession = async () => {
