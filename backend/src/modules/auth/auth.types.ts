@@ -30,6 +30,11 @@ export interface UserWithPasswordHash extends UserRow {
 
 export interface InsertSession {
   sessionHash: string
-  userId: number
+  userId: UserRow["id"]
+  expiresAt: Date
+}
+
+export interface Session {
+  token: string
   expiresAt: Date
 }

@@ -1,13 +1,20 @@
+import { createHash, randomBytes } from "node:crypto"
 import { customAlphabet } from "nanoid"
 import { DatabaseError } from "pg"
 import type { Result } from "../../shared/result.ts"
 import { toPublicUser } from "../users/users.service.ts"
 import type { UserPublic, UserRow } from "../users/users.types.ts"
-import { findPasswordAccountByUsername, findRetiredUsername, insertUserWithPassword } from "./auth.repository.ts"
-import { type LoginRequestData, type PasswordRegistrationInsert, type RegisterRequestData } from "./auth.types.ts"
+import { findPasswordAccountByUsername, findRetiredUsername, insertSession, insertUserWithPassword } from "./auth.repository.ts"
+import {
+  type LoginRequestData,
+  type PasswordRegistrationInsert,
+  type RegisterRequestData,
+  type Session as IssuedSession,
+} from "./auth.types.ts"
 import { hashPassword, verifyPassword } from "./password.ts"
 
 const RANDOM_HASH = "$scrypt$N=131072,r=8,p=1$pUEk/9bMXjfbka9rp8z6MA==$FXPYPUYC2YcKsATgARhX0i8UCljVoQ/gsik/6Ym6weo="
+const SESSION_TTL_DAYS = 30
 
 export type RegisterError = "username-taken" | "email-taken"
 
@@ -89,4 +96,17 @@ export const login = async ({ username, password }: LoginRequestData): Promise<R
   const { passwordHash: _, ...user } = userWithHash
 
   return { ok: true, value: user }
+}
+
+export const hashSessionToken = (token: string): string => {
+  return createHash("sha256").update(token).digest("hex")
+}
+
+export const createSession = async (userId: UserRow["id"]): Promise<IssuedSession> => {
+  const token = randomBytes(32).toString("base64url")
+  const expiresAt = new Date(Date.now() + SESSION_TTL_DAYS * 24 * 60 * 60 * 1000)
+
+  await insertSession({ sessionHash: hashSessionToken(token), userId, expiresAt })
+
+  return { token, expiresAt }
 }
