@@ -2,7 +2,7 @@ import assert from "node:assert/strict"
 import { randomBytes } from "node:crypto"
 import { after, describe, it } from "node:test"
 import { RegisterRequestSchema } from "../../modules/auth/auth.schemas.ts"
-import { login, register } from "../../modules/auth/auth.service.ts"
+import { createSession, hashSessionToken, login, register } from "../../modules/auth/auth.service.ts"
 import type { RegisterRequestData } from "../../modules/auth/auth.types.ts"
 import { verifyPassword } from "../../modules/auth/password.ts"
 import { pool } from "../../shared/database/database.ts"
@@ -111,5 +111,37 @@ describe("login", () => {
     const result = await login({ username: newRegistration().username, password: "correct horse" })
 
     assert.deepStrictEqual(result, { ok: false, error: "invalid-credentials" })
+  })
+})
+
+describe("createSession", () => {
+  it("stores the token's sha256, never the token itself", async () => {
+    const data = newRegistration()
+    const registered = await register(data)
+    assert.ok(registered.ok)
+    const loggedIn = await login({ username: data.username, password: data.password })
+    assert.ok(loggedIn.ok)
+
+    const { token, expiresAt } = await createSession(loggedIn.value.id)
+
+    const rows = await query<{ sessionHash: string; expiresAt: Date }>("SELECT session_hash, expires_at FROM sessions WHERE user_id = $1", [
+      loggedIn.value.id,
+    ])
+    assert.equal(rows.length, 1)
+    assert.equal(rows[0].sessionHash, hashSessionToken(token))
+    assert.notEqual(rows[0].sessionHash, token)
+    assert.equal(rows[0].expiresAt.getTime(), expiresAt.getTime())
+  })
+
+  it("expires about 30 days from now", async () => {
+    const data = newRegistration()
+    await register(data)
+    const loggedIn = await login({ username: data.username, password: data.password })
+    assert.ok(loggedIn.ok)
+
+    const { expiresAt } = await createSession(loggedIn.value.id)
+
+    const days = (expiresAt.getTime() - Date.now()) / (24 * 60 * 60 * 1000)
+    assert.ok(days > 29.9 && days <= 30, `expected ~30 days, got ${days}`)
   })
 })
