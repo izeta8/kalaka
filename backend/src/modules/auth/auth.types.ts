@@ -27,3 +27,9 @@ export type LoginRequestData = z.output<typeof LoginRequestSchema>
 export interface UserWithPasswordHash extends UserRow {
   passwordHash: string
 }
+
+export interface InsertSession {
+  sessionHash: string
+  userId: number
+  expiresAt: Date
+}
