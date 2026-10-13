@@ -1,11 +1,10 @@
 import { type Request, type Response, Router } from "express"
 import { type Result } from "../../shared/result.ts"
+import { requireSession } from "../auth/auth.middleware.ts"
 import { SlugSchema } from "../towns/towns.schemas.ts"
 import { PostRequestSchema, PostSlugSchema } from "./posts.schemas.ts"
 import * as postsService from "./posts.service.ts"
 import type { PostPublic } from "./posts.types.ts"
-// Simulates the session. Authentication is not implemented yet.
-const MOCKED_AUTHOR_ID = 1
 
 // POST /provinces/:provinceSlug/towns/:townSlug/posts
 export const createTownPost = async (req: Request, res: Response) => {
@@ -29,7 +28,7 @@ export const createTownPost = async (req: Request, res: Response) => {
 
   const result = await postsService.publishPostInTown(provinceSlug.data, townSlug.data, {
     ...body.data,
-    authorId: MOCKED_AUTHOR_ID,
+    authorId: res.locals.userId as number,
   })
 
   sendPublishResult(res, result, { provinceSlug: provinceSlug.data, townSlug: townSlug.data })
@@ -49,7 +48,7 @@ export const createProvincePost = async (req: Request, res: Response) => {
     return
   }
 
-  const result = await postsService.publishPostInProvince(provinceSlug.data, { ...body.data, authorId: MOCKED_AUTHOR_ID })
+  const result = await postsService.publishPostInProvince(provinceSlug.data, { ...body.data, authorId: res.locals.userId as number })
 
   sendPublishResult(res, result, { provinceSlug: provinceSlug.data })
 }
@@ -96,7 +95,7 @@ export const createReply = async (req: Request, res: Response) => {
     return
   }
 
-  const result = await postsService.publishReply(postSlug.data, { ...body.data, authorId: MOCKED_AUTHOR_ID })
+  const result = await postsService.publishReply(postSlug.data, { ...body.data, authorId: res.locals.userId as number })
 
   if (result.ok) {
     res.status(201).send(result.value)
@@ -117,4 +116,4 @@ export const createReply = async (req: Request, res: Response) => {
 
 export const postsRouter = Router()
 
-postsRouter.post("/:postSlug/replies", createReply)
+postsRouter.post("/:postSlug/replies", requireSession, createReply)

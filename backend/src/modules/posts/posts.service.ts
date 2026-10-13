@@ -77,7 +77,6 @@ const publishPost = async (
   roomId: number,
   replyTo: ReplyToData | null,
 ): Promise<Result<PostPublic, "author-not-found">> => {
-  // The authentication will be implemented soon. We are just mocking insecurely...
   const author = await usersRepository.findUserById(authorId)
   if (author === null) {
     return { ok: false, error: "author-not-found" }

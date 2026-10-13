@@ -1,4 +1,5 @@
 import { type Request, type Response, Router } from "express"
+import { requireSession } from "../auth/auth.middleware.ts"
 import { createTownPost } from "../posts/posts.routes.ts"
 import { SlugSchema } from "./towns.schemas.ts"
 import * as townsService from "./towns.service.ts"
@@ -24,4 +25,4 @@ townsRouter.get("/", async (req: Request, res: Response) => {
   res.status(200).send(towns)
 })
 
-townsRouter.post("/:townSlug/posts", createTownPost)
+townsRouter.post("/:townSlug/posts", requireSession, createTownPost)
