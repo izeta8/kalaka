@@ -7,6 +7,7 @@
   "type": "module",
   "main": "src/server.ts",
   "scripts": {
+    "build": "tsc",
     "dev": "node --env-file=.env --watch src/server.ts ",
     "pretest": "npm run db:test:reset",
     "test": "node --env-file=.env.test --test 'src/**/*.test.ts'",
