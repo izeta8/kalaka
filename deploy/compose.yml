@@ -25,6 +25,7 @@ services:
 
   backend:
     build: ../backend
+    image: ghcr.io/izeta8/kalaka:v0.0.1
     restart: always
     ports:
       - ${PORT}:3000
