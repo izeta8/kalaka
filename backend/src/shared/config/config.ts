@@ -10,7 +10,7 @@ const EnvSchema = z.object({
   POSTGRES_PASSWORD: z.string().nonempty(),
   POSTGRES_HOST: z.hostname().nonempty(),
   POSTGRES_PORT: z.coerce.number().min(1).max(65535),
-  POSTGRES_DATABASE: z.coerce.string().nonempty(),
+  POSTGRES_DB: z.coerce.string().nonempty(),
 })
 
 export const env = EnvSchema.parse(process.env)

@@ -12,7 +12,7 @@ export const pool = new Pool({
   user: env.POSTGRES_USER,
   password: env.POSTGRES_PASSWORD,
   port: env.POSTGRES_PORT,
-  database: env.POSTGRES_DATABASE,
+  database: env.POSTGRES_DB,
 
   // Pool configuration
   max: 20,
