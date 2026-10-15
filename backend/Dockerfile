@@ -23,6 +23,7 @@ RUN npm ci --omit=dev
 
 # Runner
 FROM base AS runner
+LABEL org.opencontainers.image.source="https://github.com/izeta8/kalaka"
 ENV NODE_ENV="production"
 WORKDIR /opt/backend
 
