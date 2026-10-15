@@ -1,0 +1,45 @@
+services: 
+
+  db:
+    image: postgres:18
+    restart: always
+    # set shared memory limit when using docker compose
+    shm_size: 128mb
+    volumes:
+      - db-data:/var/lib/postgresql
+      - ../postgres/initdb/01-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ../postgres/initdb/02-rooms.sql:/docker-entrypoint-initdb.d/02-rooms.sql
+      - ../postgres/initdb/03-provinces.sql:/docker-entrypoint-initdb.d/03-provinces.sql
+      - ../postgres/initdb/04-towns.sql:/docker-entrypoint-initdb.d/04-towns.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+
+  backend:
+    build: ../backend
+    restart: always
+    ports:
+      - ${PORT}:3000
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    environment:
+      NODE_ENV: ${NODE_ENV}
+
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      
+volumes:
+  db-data:
