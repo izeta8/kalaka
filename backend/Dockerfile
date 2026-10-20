@@ -31,6 +31,8 @@ WORKDIR /opt/backend
 COPY --from=builder /app/dist ./ 
 # Copy production node_modules
 COPY --from=prod-deps /app ./
+# Copy migrations
+COPY migrations ./migrations
 
 EXPOSE 3000
 USER node:node
