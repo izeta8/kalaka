@@ -1,5 +1,5 @@
 import { runner } from "node-pg-migrate"
-import { migrationDatabaseClient } from "./migrate.ts";
+import { migrationDatabaseClient } from "./migrationDatabaseClient.ts";
 
 async function runBaseline() {
 
