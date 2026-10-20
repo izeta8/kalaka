@@ -7,10 +7,6 @@ services:
     shm_size: 128mb
     volumes:
       - db-data:/var/lib/postgresql
-      - ../postgres/initdb/01-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - ../postgres/initdb/02-rooms.sql:/docker-entrypoint-initdb.d/02-rooms.sql
-      - ../postgres/initdb/03-provinces.sql:/docker-entrypoint-initdb.d/03-provinces.sql
-      - ../postgres/initdb/04-towns.sql:/docker-entrypoint-initdb.d/04-towns.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
