@@ -13,7 +13,6 @@ services:
       POSTGRES_TEST_DATABASE: ${POSTGRES_TEST_DATABASE}
     volumes:
       - db-data:/var/lib/postgresql
-      - ./initdb:/docker-entrypoint-initdb.d/
     ports:
       - ${POSTGRES_PORT}:5432
     healthcheck:
