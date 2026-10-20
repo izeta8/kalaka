@@ -19,7 +19,8 @@
     "db:compose": "docker compose -f ../postgres/docker-compose.yml",
     "db:up": "npm run db:compose -- up -d --wait",
     "db:test:reset": "npm run db:compose -- exec -T db /docker-entrypoint-initdb.d/99-test-db.sh",
-    "migrate": "node --env-file=.env ./src/scripts/migrate.ts"
+    "migrate": "node --env-file=.env ./src/scripts/migrate.ts",
+    "migrate:baseline": "node --env-file=.env ./src/scripts/baseline.ts"
   },
   "dependencies": {
     "express": "^5.2.1",
