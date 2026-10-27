@@ -7,7 +7,7 @@ import statistics
 from time import perf_counter
 from pydantic import BaseModel
 
-from moderation.classifiers import LabelType, classify_llama, get_labels_from_infractions
+from moderation.classifiers import LabelType, classify, get_labels_from_infractions
 
 ROOT_DIR = Path(__file__).parent
 DATASET_PATH = os.path.join(ROOT_DIR, "moderation-dev.jsonl")
@@ -62,7 +62,7 @@ def evaluate_post(dataset_post: DatasetPost) -> PostEvaluation:
     start = perf_counter()
 
     # Evaluation
-    response = classify_llama(dataset_post.text)
+    response = classify(dataset_post.text)
 
     # Calculate latency
     end = perf_counter()
