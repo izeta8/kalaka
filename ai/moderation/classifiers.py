@@ -61,7 +61,7 @@ Basque language, Spanish, or both. And can even be written in informally or just
 
 | Category | What it is |
 |---|---|
-| `spam` | Misleading advertising, baits, repetition to attract clicks or followers |
+| `spam` | Misleading advertising or baits to attract clicks or followers. Judge only the style of this post (see "Spam style") |
 | `insult` | Personal attack or contempt about someone | 
 | `threat` | Announcement of damage over an individual or its belongings |
 | `personal_data` | Data that identifies or locates **another** person without its consent (phone number, address, DNI, car license plate... ) |
@@ -70,8 +70,20 @@ If you have a doubt whether the message is ok or threat/personal_data, go for th
 
 ## What is not a category
 An insult without a specific target, idioms such as ("me muero", "os mato de la risa"), talk
-about a threat without a threat, political criticism without insults, publishing personal 
-information about yourself. 
+about a threat without a threat, publishing personal information about yourself.
+
+- **Jokes between people who know each other** are always ok, even if they use words that
+  could be an insult ("Mikel zu bai zarela ganorabakoa jajaja").
+- **Criticism of a group or an institution** is ok, even with harsh words, as long as it does
+  not name or point to a specific person ("Udaleko politikari guztiak lapur hutsak dira").
+
+## Spam style
+Classify each post on its own: you never know what the author posted before, so repetition
+is not a criterion. Decide by the style of the post:
+- **spam**: clickbait hooks, piles of emojis, exaggerated promises ("gana 500€ desde casa"),
+  urgency ("¡solo hoy!"), links or contacts to lure people.
+- **ok**: a plain, informative announcement, such as a local business telling its opening
+  hours, prices or how to book ("Gure tabernan pintxo-pote ostegunetan! Erreserbak: ...").
 
 ## Label rules
 A single post could have several tags.
