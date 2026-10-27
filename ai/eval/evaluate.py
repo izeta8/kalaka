@@ -50,11 +50,15 @@ class DatasetPost(BaseModel):
 #            #
 ##############
 
-def evaluate(model: Model):
+def evaluate(model: Model, resume: bool = False):
+    done_ids = load_done_ids(model.evaluation_file) if resume else set()
     with open(DATASET_PATH, "r") as fp:
-        clear_evaluation_file(model.evaluation_file)
+        if not resume:
+            clear_evaluation_file(model.evaluation_file)
         for line in fp:
             post = get_post_from_dataset_line(line)
+            if post.id in done_ids:
+                continue
             print("Processing Post: " + post.id)
             post_evaluation = evaluate_post(model.classify_function, post)
             write_evaluation(model.evaluation_file, post_evaluation)
@@ -87,6 +91,13 @@ def evaluate_post(classify_function: Model, dataset_post: DatasetPost) -> PostEv
         predicted=prediction,
         latency=latency
     )
+
+def load_done_ids(evaluation_file: str) -> set[str]:
+    # Posts already evaluated, so that --resume only runs the missing ones
+    if not os.path.exists(evaluation_file):
+        return set()
+    with open(evaluation_file, "r") as fp:
+        return {get_evaluation_from_file(line).id for line in fp if line.strip()}
 
 def clear_evaluation_file(evaluation_file: str):
     open(evaluation_file, 'w').close()
@@ -248,12 +259,13 @@ def main(args):
     if args.metric:
         metrics(model)
     else:
-        evaluate(model)
+        evaluate(model, resume=args.resume)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Evaluation pipeline.")
         
     parser.add_argument("--model", required=True, choices=AVAILABLE_MODELS, help="Model to evaluate")
+    parser.add_argument("--resume", action="store_true", help="Keep the existing results and only evaluate the missing posts.")
     parser.add_argument("--metric", action="store_true", help="If included, it will generate metrics instead of evaluating.")
     
     args = parser.parse_args()

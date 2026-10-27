@@ -133,7 +133,13 @@ def classify(ai: OpenAI, model: str, post: str) -> ClassifierSchema | None:
         }
     )
 
-    raw_json_response = response.choices[0].message.content
+    choice = response.choices[0]
+    # A blocked request still returns 200 OK: the block is in finish_reason and there is no message
+    if choice.message is None or (choice.finish_reason or "").startswith("content_filter"):
+        print(f"Response blocked by the provider: {choice.finish_reason}")
+        return None
+
+    raw_json_response = choice.message.content
 
     try:
         validated_output = ClassifierSchema.model_validate_json(raw_json_response)

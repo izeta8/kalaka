@@ -1,0 +1,5 @@
+insult         TP 10  FP  2  FN  0  recall 100% (min 80%) ✅  precision  83% (min 90%) ❌
+threat         TP 10  FP  0  FN  1  recall  91% (min 100%) ❌  precision 100% (min 70%) ✅
+spam           TP  9  FP  1  FN  0  recall 100% (min 80%) ✅  precision  90% (min 90%) ✅
+personal_data  TP  8  FP  0  FN  1  recall  89% (min 100%) ❌  precision 100% (min 70%) ✅
+latency mean 8.38 s  p95 18.50 s  invalid responses 1/50
