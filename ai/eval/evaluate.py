@@ -8,16 +8,24 @@ from time import perf_counter
 from collections.abc import Callable
 from pydantic import BaseModel
 
-from moderation.classifiers import ClassifierSchema, LabelType, get_labels_from_infractions, classify_gemini, classify_llama
+from moderation.classifiers import ClassifierSchema, LabelType, get_labels_from_infractions, classify_gemini, classify_llama, classify_gemma, gemini, llama, gemma
 
 ROOT_DIR = Path(__file__).parent
-DATASET_PATH = os.path.join(ROOT_DIR, "moderation-dev.jsonl")
-AVAILABLE_MODELS = ["gemini-3.5-flash-lite", "llama3.2"]
+DATASETS_DIR = ROOT_DIR / "datasets"
+# One folder per dataset, model and host: runs/<dataset>/<model>@<host>/
+# so a measurement never overwrites another one taken on a different set or machine
+RUNS_DIR = ROOT_DIR / "runs"
+DATASETS = {
+    "dev": DATASETS_DIR / "moderation-dev.jsonl",
+    "test": DATASETS_DIR / "moderation-test.jsonl",
+}
+AVAILABLE_MODELS = ["gemini-3.5-flash-lite", "llama3.2", "gemma3:4b"]
 
 class Model(BaseModel):
     name: str
-    evaluation_file: str
-    metrics_file: str 
+    dataset_file: Path
+    evaluation_file: Path
+    metrics_file: Path
     classify_function: Callable[[str], (ClassifierSchema | None)]
 
 # (min recall, min precision) per label, as fractions. Provisional, from the spec
@@ -50,9 +58,16 @@ class DatasetPost(BaseModel):
 #            #
 ##############
 
-def evaluate(model: Model, resume: bool = False):
+def evaluate(model: Model, resume: bool = False, overwrite: bool = False):
+    # Never wipe a finished measurement by accident: rerunning needs --resume or --overwrite
+    if not resume and not overwrite and has_evaluations(model.evaluation_file):
+        raise SystemExit(
+            f"{model.evaluation_file} already has results. "
+            "Use --resume to finish it or --overwrite to start again."
+        )
+    model.evaluation_file.parent.mkdir(parents=True, exist_ok=True)
     done_ids = load_done_ids(model.evaluation_file) if resume else set()
-    with open(DATASET_PATH, "r") as fp:
+    with open(model.dataset_file, "r") as fp:
         if not resume:
             clear_evaluation_file(model.evaluation_file)
         for line in fp:
@@ -62,6 +77,9 @@ def evaluate(model: Model, resume: bool = False):
             print("Processing Post: " + post.id)
             post_evaluation = evaluate_post(model.classify_function, post)
             write_evaluation(model.evaluation_file, post_evaluation)
+
+def has_evaluations(evaluation_file: Path) -> bool:
+    return evaluation_file.exists() and evaluation_file.stat().st_size > 0
 
 def get_post_from_dataset_line(json_line: str) -> DatasetPost:
     dataset_post = DatasetPost.model_validate_json(json_line)
@@ -118,7 +136,10 @@ def metrics(model: Model):
     metrics_file = model.metrics_file
     evaluation_file = model.evaluation_file
 
-    evaluations = load_evaluations(evaluation_file)    
+    if not has_evaluations(evaluation_file):
+        raise SystemExit(f"No results in {evaluation_file}: evaluate first.")
+
+    evaluations = load_evaluations(evaluation_file)
     clear_metrics_file(metrics_file)
 
     for label in TRESHOLDS:
@@ -247,25 +268,47 @@ def main(args):
     if model_name not in AVAILABLE_MODELS:
         raise ValueError(f"Unknown model '{model_name}'. Available: {AVAILABLE_MODELS}")
 
-    classify_function = classify_llama if model_name == "llama3.2" else classify_gemini
+    
+    classify_function = None
+    client = None
+    if model_name == "llama3.2":
+        classify_function = classify_llama
+        client = llama
+    elif model_name == "gemini-3.5-flash-lite":
+        classify_function = classify_gemini
+        client = gemini
+    elif model_name == "gemma3:4b":
+        classify_function = classify_gemma
+        client = gemma
+    else:
+        raise ValueError("No classify_function specified for model: " + model_name)
+
+    # The host comes from the client's base_url, so the laptop (localhost) and the
+    # CT (192.168.1.107) land in different folders without having to remember a flag
+    host = client.base_url.host
+    run_dir = RUNS_DIR / args.dataset / f"{model_name.replace(':', '-')}@{host}"
 
     model = Model(
         name=model_name,
-        evaluation_file=os.path.join(ROOT_DIR, f"results-{model_name}.jsonl"),
-        metrics_file=os.path.join(ROOT_DIR, f"metrics-{model_name}.txt"), 
+        dataset_file=DATASETS[args.dataset],
+        evaluation_file=run_dir / "results.jsonl",
+        metrics_file=run_dir / "metrics.txt",
         classify_function=classify_function
     )
+    print(f"Dataset: {model.dataset_file.relative_to(ROOT_DIR)}  Run: {run_dir.relative_to(ROOT_DIR)}")
 
     if args.metric:
         metrics(model)
     else:
-        evaluate(model, resume=args.resume)
+        evaluate(model, resume=args.resume, overwrite=args.overwrite)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Evaluation pipeline.")
         
     parser.add_argument("--model", required=True, choices=AVAILABLE_MODELS, help="Model to evaluate")
+    parser.add_argument("--dataset", default="dev", choices=DATASETS.keys(), help="Dataset to evaluate. 'test' is only for the final measurement.")
     parser.add_argument("--resume", action="store_true", help="Keep the existing results and only evaluate the missing posts.")
+    parser.add_argument("--overwrite", action="store_true", help="Delete the existing results of this run and start again.")
     parser.add_argument("--metric", action="store_true", help="If included, it will generate metrics instead of evaluating.")
     
     args = parser.parse_args()

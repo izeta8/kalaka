@@ -23,3 +23,6 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 .idea/
+# Backups written by the dataset review tool
+*.bak
+*.pre-en

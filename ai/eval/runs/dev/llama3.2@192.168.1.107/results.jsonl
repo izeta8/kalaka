@@ -1,0 +1,6 @@
+{"id":"dev-001","expected":["ok"],"predicted":["insult"],"latency":126.29286715499984}
+{"id":"dev-002","expected":["ok"],"predicted":["insult"],"latency":58.98728966499948}
+{"id":"dev-003","expected":["ok"],"predicted":["insult"],"latency":87.46801792299993}
+{"id":"dev-004","expected":["ok"],"predicted":["insult"],"latency":59.998222084999725}
+{"id":"dev-005","expected":["ok"],"predicted":["insult"],"latency":57.608226148999165}
+{"id":"dev-006","expected":["ok"],"predicted":["insult"],"latency":59.38409010099895}
