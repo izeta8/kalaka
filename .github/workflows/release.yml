@@ -81,7 +81,7 @@ jobs:
 
       # Authenticate into GHCR
       - name: "Login to GHRC"
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
