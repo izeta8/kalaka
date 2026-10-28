@@ -19,7 +19,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
 
   migrate: 
-    image: ghcr.io/izeta8/kalaka:0.0.2
+    image: ghcr.io/izeta8/kalaka:0.0.3
     command: [ "node", "./src/scripts/migrate.js" ]
     depends_on:
       db:
@@ -34,7 +34,7 @@ services:
 
   backend:
     build: ../backend
-    image: ghcr.io/izeta8/kalaka:0.0.2
+    image: ghcr.io/izeta8/kalaka:0.0.3
     restart: always
     ports:
       - ${PORT}:3000
