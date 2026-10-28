@@ -1,0 +1,55 @@
+version: 2
+
+updates:
+  # Backend npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    groups:
+      # Bundle all non-major updates into a single PR
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  # Frontend npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    groups:
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  # Dockerfile base image (node:24.x-alpine)
+  - package-ecosystem: "docker"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    ignore:
+      # Stay on Node 24 (LTS); major upgrades are done manually
+      - dependency-name: "node"
+        update-types: ["version-update:semver-major"]
+
+  # Compose images (postgres)
+  - package-ecosystem: "docker-compose"
+    directories: ["/deploy", "/postgres"]
+    schedule:
+      interval: "weekly"
+    ignore:
+      # Our own image is published by the release workflow
+      - dependency-name: "ghcr.io/izeta8/kalaka"
+      # Postgres major upgrades need a data migration
+      - dependency-name: "postgres"
+        update-types: ["version-update:semver-major"]
+
+  # AI module Python dependencies (use "uv" if there is a uv.lock)
+  - package-ecosystem: "pip"
+    directory: "/ai"
+    schedule:
+      interval: "weekly"
+
+  # GitHub Actions versions used in workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
