@@ -1,5 +1,6 @@
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import os
@@ -8,7 +9,13 @@ from time import perf_counter
 from collections.abc import Callable
 from pydantic import BaseModel
 
-from moderation.classifiers import ClassifierSchema, LabelType, get_labels_from_infractions, classify_gemini, classify_llama, classify_gemma, gemini, llama, gemma
+from moderation.classifiers import ClassifierSchema, LabelType, get_labels_from_infractions, classify_gemini, classify_llama, classify_gemma, classify_latxa, gemini, llama, gemma, latxa, SYSTEM_PROMPT
+
+def hash_prompt(prompt: str) -> str:
+    """Hash the prompt to SHA256 and get the first 8 characters"""
+    return hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:8]
+
+PROMPT_HASH = hash_prompt(SYSTEM_PROMPT)
 
 ROOT_DIR = Path(__file__).parent
 DATASETS_DIR = ROOT_DIR / "datasets"
@@ -19,13 +26,19 @@ DATASETS = {
     "dev": DATASETS_DIR / "moderation-dev.jsonl",
     "test": DATASETS_DIR / "moderation-test.jsonl",
 }
-AVAILABLE_MODELS = ["gemini-3.5-flash-lite", "llama3.2", "gemma3:4b"]
+AVAILABLE_MODELS = [
+    "gemini-3.5-flash-lite", 
+    "llama3.2",
+    "gemma3:4b", 
+    "hf.co/mradermacher/Latxa-Llama-3.1-8B-Instruct-GGUF:Q4_K_M"
+]
 
 class Model(BaseModel):
     name: str
     dataset_file: Path
     evaluation_file: Path
     metrics_file: Path
+    prompt_file: Path
     classify_function: Callable[[str], (ClassifierSchema | None)]
 
 # (min recall, min precision) per label, as fractions. Provisional, from the spec
@@ -66,6 +79,7 @@ def evaluate(model: Model, resume: bool = False, overwrite: bool = False):
             "Use --resume to finish it or --overwrite to start again."
         )
     model.evaluation_file.parent.mkdir(parents=True, exist_ok=True)
+    model.prompt_file.write_text(SYSTEM_PROMPT)
     done_ids = load_done_ids(model.evaluation_file) if resume else set()
     with open(model.dataset_file, "r") as fp:
         if not resume:
@@ -280,19 +294,23 @@ def main(args):
     elif model_name == "gemma3:4b":
         classify_function = classify_gemma
         client = gemma
+    elif model_name == "Latxa-Llama-3.1-8B-Instruct-GGUF:Q4_K_M":
+        classify_function = classify_latxa
+        client = latxa
     else:
         raise ValueError("No classify_function specified for model: " + model_name)
 
     # The host comes from the client's base_url, so the laptop (localhost) and the
     # CT (192.168.1.107) land in different folders without having to remember a flag
     host = client.base_url.host
-    run_dir = RUNS_DIR / args.dataset / f"{model_name.replace(':', '-')}@{host}"
+    run_dir = RUNS_DIR / args.dataset / f"{model_name.replace(':', '-')}@{host}" / f"prompt-{PROMPT_HASH}"
 
     model = Model(
         name=model_name,
         dataset_file=DATASETS[args.dataset],
         evaluation_file=run_dir / "results.jsonl",
         metrics_file=run_dir / "metrics.txt",
+        prompt_file=run_dir / "prompt.txt",
         classify_function=classify_function
     )
     print(f"Dataset: {model.dataset_file.relative_to(ROOT_DIR)}  Run: {run_dir.relative_to(ROOT_DIR)}")
@@ -313,4 +331,5 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     main(args)
+
 
