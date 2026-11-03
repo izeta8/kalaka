@@ -213,4 +213,12 @@ describe("posts.moderation_status", () => {
       code: "23514",
     })
   })
+
+  it("the database accepts 'pending_review' for posts waiting for a human", async () => {
+    const res = await authedPost(townPostsUrl).send({ content: "Kaixo berrikusketa!" })
+
+    await pool.query("UPDATE posts SET moderation_status = 'pending_review' WHERE slug = $1", [res.body.slug])
+
+    assert.equal(await moderationStatusOf(res.body.slug), "pending_review")
+  })
 })
