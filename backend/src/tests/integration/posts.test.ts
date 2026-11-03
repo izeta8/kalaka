@@ -192,3 +192,25 @@ describe("POST routes that publish, without a session", () => {
     })
   }
 })
+
+describe("posts.moderation_status", () => {
+  const moderationStatusOf = async (slug: string) => {
+    const { rows } = await pool.query<{ moderation_status: string }>("SELECT moderation_status FROM posts WHERE slug = $1", [slug])
+    return rows[0].moderation_status
+  }
+
+  it("a newly published post waits for moderation as 'pending'", async () => {
+    const res = await authedPost(townPostsUrl).send({ content: "Kaixo moderazioa!" })
+
+    assert.equal(res.status, 201)
+    assert.equal(await moderationStatusOf(res.body.slug), "pending")
+  })
+
+  it("the database rejects a status outside the allowed ones", async () => {
+    const res = await authedPost(townPostsUrl).send({ content: "Kaixo!" })
+
+    await assert.rejects(pool.query("UPDATE posts SET moderation_status = 'hidden' WHERE slug = $1", [res.body.slug]), {
+      code: "23514",
+    })
+  })
+})
