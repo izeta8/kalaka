@@ -57,6 +57,7 @@ latxa = OpenAI(
 
 LabelType = Literal["ok", "insult", "threat", "spam", "personal_data"]
 InfractionType = Literal["insult", "threat", "spam", "personal_data"]
+ModerationStatus = Literal["approved", "censored", "pending_review"]
 
 class Infraction(BaseModel):
     evidence: str = Field(description="Exact fragment of the post that breaks the rules")
@@ -159,6 +160,16 @@ POST_DELIMITER_TAG = "post"
 
 def wrap_in_tag(text: str, delimiter: str):
     return f"<{delimiter}>{text}</{delimiter}>"
+
+def get_moderation_status_by_labels(labels: list[LabelType]) -> ModerationStatus:
+
+    if "threat" in labels or "personal_data" in labels:
+        return "pending_review"
+
+    if "insult" in labels or "spam" in labels: 
+        return "censored"
+
+    return "approved"
 
 def classify(ai: OpenAI, model: str, post: str) -> ClassifierSchema | None:
 
