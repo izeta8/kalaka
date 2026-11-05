@@ -195,7 +195,7 @@ dependencies = [
     { name = "dotenv" },
     { name = "nanoid" },
     { name = "openai" },
-    { name = "psycopg", extra = ["c"] },
+    { name = "psycopg" },
     { name = "pydantic" },
 ]
 
@@ -204,7 +204,7 @@ requires-dist = [
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "nanoid", specifier = ">=2.0.0" },
     { name = "openai", specifier = ">=3.37.0" },
-    { name = "psycopg", extras = ["c"], specifier = ">=3.3.8" },
+    { name = "psycopg", specifier = ">=3.3.8" },
     { name = "pydantic", specifier = ">=2.14.1" },
 ]
 
@@ -246,17 +246,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/11/c8/3bd7e09770a5829eb
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7b/5c/50a0b0796ccb69b11934f7c5758051c08019bda2fafb417501109fffd569/psycopg-3.3.8-py3-none-any.whl", hash = "sha256:ca50af6072ba9ea6866f33021975230c2555d7bfdb9d8f94ca3af5c3d1bf2167", size = 216209, upload-time = "2026-11-04T09:37:35.491Z" },
 ]
-
-[package.optional-dependencies]
-c = [
-    { name = "psycopg-c", marker = "implementation_name != 'pypy'" },
-]
-
-[[package]]
-name = "psycopg-c"
-version = "3.3.8"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/5b/23/0074f50899d773aae857af496745cd898da868f8f2d9415591d51c391cec/psycopg_c-3.3.8.tar.gz", hash = "sha256:af81a99b02600e6c2cdf468509c04bb8208500ea60d63f70616e32ea9cb2758f", size = 700571, upload-time = "2026-11-04T09:44:27.694Z" }
 
 [[package]]
 name = "pydantic"
