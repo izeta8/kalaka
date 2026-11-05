@@ -1,0 +1,5 @@
+.env*
+.venv
+eval
+tests
+__pycache__
