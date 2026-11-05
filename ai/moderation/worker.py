@@ -1,3 +1,4 @@
+import time
 from typing import Literal
 
 import openai
@@ -63,5 +64,32 @@ def _save(post_id, from_status, to_status, tags, error, outcome: Outcome, infra_
     return outcome
 
 
+# Fixed waits for v0: with one post every ~30 s there is no need for exponential backoff
+EMPTY_QUEUE_WAIT_SECONDS = 10
+INFRA_FAILURE_WAIT_SECONDS = 60
+
+
+def wait_seconds(outcome: Outcome) -> int:
+    if outcome == "empty":
+        return EMPTY_QUEUE_WAIT_SECONDS
+    if outcome == "infra_failure":
+        # Give the model server time to come back instead of hammering it
+        return INFRA_FAILURE_WAIT_SECONDS
+    # Something was done: go straight for the next post
+    return 0
+
+
+def run_forever():
+    print("Moderation worker started")
+    while True:
+        outcome = moderate_next_post()
+        seconds = wait_seconds(outcome)
+        if seconds:
+            time.sleep(seconds)
+
+
 if __name__ == "__main__":
-    print(moderate_next_post())
+    try:
+        run_forever()
+    except KeyboardInterrupt:
+        print("Moderation worker stopped")

@@ -41,3 +41,10 @@ class ModerateNextPostTest(unittest.TestCase):
         update.side_effect = RecordChanged("changed")
         with patch.object(worker, "classify_gemma", return_value=ClassifierSchema(infractions=[])):
             self.assertEqual(worker.moderate_next_post(), "changed")
+
+
+class WaitSecondsTest(unittest.TestCase):
+    def test_waits_only_when_there_is_nothing_useful_to_do(self):
+        self.assertEqual(worker.wait_seconds("moderated"), 0)
+        self.assertEqual(worker.wait_seconds("empty"), worker.EMPTY_QUEUE_WAIT_SECONDS)
+        self.assertEqual(worker.wait_seconds("infra_failure"), worker.INFRA_FAILURE_WAIT_SECONDS)
