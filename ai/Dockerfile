@@ -18,5 +18,5 @@ COPY --chown=ai:ai . .
 USER ai
 
 ENV PATH=/opt/kalaka_ai/.venv/bin:$PATH
-
+ENV PYTHONUNBUFFERED=1
 CMD ["python", "-m", "moderation.worker"]
