@@ -50,4 +50,17 @@ describe("posts_moderation_history", () => {
     // A status is not a label: this is the mix-up the CHECK has to catch
     await assert.rejects(insertHistoryRow(postId, ["approved"]), { code: "23514" })
   })
+
+  it("an infrastructure failure cannot change the post status", async () => {
+    const { postId } = await publishPostAsNewUser()
+    const insertInfraFailure = (toStatus: string) =>
+      pool.query(
+        `INSERT INTO posts_moderation_history (post_id, from_status, to_status, actor, tags, error, infra_failure)
+         VALUES ($1, 'pending', $2, 'ai', '{}', 'Connection refused', true)`,
+        [postId, toStatus],
+      )
+
+    await insertInfraFailure("pending")
+    await assert.rejects(insertInfraFailure("approved"), { code: "23514" })
+  })
 })

@@ -9,6 +9,7 @@ CREATE TABLE posts_moderation_history (
     tags TEXT[] NOT NULL,
     model TEXT,
     error TEXT,
+    infra_failure BOOLEAN NOT NULL DEFAULT false,
     created_at timestamptz NOT NULL DEFAULT now(),
  
     CONSTRAINT posts_moderation_history_tags_allowed_values CHECK (
@@ -16,7 +17,10 @@ CREATE TABLE posts_moderation_history (
     ),
     CONSTRAINT posts_moderation_history_from_status_value CHECK (from_status IN ('pending', 'approved', 'censored', 'pending_review', 'blocked', 'failed')),
     CONSTRAINT posts_moderation_history_to_status_value CHECK (to_status IN ('pending', 'approved', 'censored', 'pending_review', 'blocked', 'failed')),
-    CONSTRAINT posts_moderation_history_actor_value CHECK (actor IN ('human', 'ai'))
+    CONSTRAINT posts_moderation_history_actor_value CHECK (actor IN ('human', 'ai')),
+    CONSTRAINT posts_moderation_history_infra_failure_keeps_status CHECK (
+        NOT infra_failure OR from_status = to_status
+    )
 );
 
 CREATE INDEX idx_post_moderation_history_post_id ON posts_moderation_history(post_id);
