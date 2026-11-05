@@ -38,15 +38,20 @@ def fetch_oldest_unmoderated_post():
             return cur.fetchone()
 
 
-            record = cur.fetchone()
-            return record
-        
-    except BaseException:
-        conn.rollback()
-    else:
-        conn.commit()
-    finally:
-        conn.close()
+def count_content_failures(post_id):
+    # Infrastructure failures are logged too, but they don't spend attempts
+    with psycopg.connect(CONNECTION_STRING) as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+            SELECT COUNT(*)
+            FROM posts_moderation_history
+            WHERE post_id = %s
+            AND to_status = 'failed'
+            AND NOT infra_failure
+            """,
+            (post_id,))
+            return cur.fetchone()[0]
+
 
 def update_post_moderation(post_id, from_status, to_status, actor, tags, model, error, infra_failure=False):
     with psycopg.connect(CONNECTION_STRING) as conn:
