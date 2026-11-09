@@ -64,7 +64,8 @@ class WaitSecondsTest(unittest.TestCase):
 WORKER_WITH_EMPTY_QUEUE = """
 import runpy
 from unittest.mock import patch
-with patch("database.database.fetch_oldest_unmoderated_post", return_value=None):
+with patch("database.database.fetch_oldest_unmoderated_post", return_value=None), \
+     patch("moderation.classifiers.check_gemma_is_ready"):
     runpy.run_module("moderation.worker", run_name="__main__")
 """
 
