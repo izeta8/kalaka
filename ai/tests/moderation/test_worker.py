@@ -1,4 +1,8 @@
+import subprocess
+import sys
+import time
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 import httpx2
@@ -42,9 +46,40 @@ class ModerateNextPostTest(unittest.TestCase):
         with patch.object(worker, "classify_gemma", return_value=ClassifierSchema(infractions=[])):
             self.assertEqual(worker.moderate_next_post(), "changed")
 
+    def test_shutdown_while_classifying_saves_nothing(self, _fetch, update):
+        with patch.object(worker, "classify_gemma", side_effect=worker.ShutdownRequested()):
+            with self.assertRaises(worker.ShutdownRequested):
+                worker.moderate_next_post()
+        update.assert_not_called()
+
 
 class WaitSecondsTest(unittest.TestCase):
     def test_waits_only_when_there_is_nothing_useful_to_do(self):
         self.assertEqual(worker.wait_seconds("moderated"), 0)
         self.assertEqual(worker.wait_seconds("empty"), worker.EMPTY_QUEUE_WAIT_SECONDS)
         self.assertEqual(worker.wait_seconds("infra_failure"), worker.INFRA_FAILURE_WAIT_SECONDS)
+
+
+# Runs the real entry point with an empty queue (no database) and stops it like `docker stop` does
+WORKER_WITH_EMPTY_QUEUE = """
+import runpy
+from unittest.mock import patch
+with patch("database.database.fetch_oldest_unmoderated_post", return_value=None):
+    runpy.run_module("moderation.worker", run_name="__main__")
+"""
+
+
+class SigtermTest(unittest.TestCase):
+    def test_sigterm_stops_the_worker_at_once_with_exit_code_0(self):
+        ai_dir = Path(__file__).resolve().parents[2]
+        proc = subprocess.Popen([sys.executable, "-u", "-c", WORKER_WITH_EMPTY_QUEUE],
+                                cwd=ai_dir, stdout=subprocess.PIPE, text=True)
+        self.assertIn("started", proc.stdout.readline())  # now it is sleeping on the empty queue
+
+        start = time.monotonic()
+        proc.terminate()  # SIGTERM
+        output, _ = proc.communicate(timeout=5)
+
+        self.assertEqual(proc.returncode, 0)
+        self.assertLess(time.monotonic() - start, 1)
+        self.assertIn("received SIGTERM", output)

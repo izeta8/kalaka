@@ -1,3 +1,4 @@
+import signal
 import time
 from typing import Literal
 
@@ -27,6 +28,14 @@ INFRA_ERRORS = (openai.APIConnectionError, openai.RateLimitError, openai.Interna
 Outcome = Literal["empty", "moderated", "content_failure", "infra_failure", "changed"]
 
 
+class ShutdownRequested(Exception):
+    """Raised by the SIGTERM handler to stop the worker wherever it is."""
+
+
+def _handle_sigterm(signum, frame):
+    raise ShutdownRequested()
+
+
 def moderate_next_post() -> Outcome:
     post = fetch_oldest_unmoderated_post()
     if post is None:
@@ -34,6 +43,16 @@ def moderate_next_post() -> Outcome:
 
     post_id, content, from_status = post
 
+    try:
+        return _moderate(post_id, content, from_status)
+    except ShutdownRequested:
+        # Nothing is written until _save, and _save's transaction rolls back if cut:
+        # the post keeps its status and is picked up again on the next start
+        print(f"Post {post_id}: processing cancelled, not saved")
+        raise
+
+
+def _moderate(post_id, content, from_status) -> Outcome:
     try:
         result = classify_gemma(content)
     except INFRA_ERRORS as e:
@@ -89,7 +108,12 @@ def run_forever():
 
 
 if __name__ == "__main__":
+    # As PID 1 in the container, the kernel ignores SIGTERM unless there is a handler:
+    # without this, `docker stop` waits 10 s and kills the worker with SIGKILL (137)
+    signal.signal(signal.SIGTERM, _handle_sigterm)
     try:
         run_forever()
+    except ShutdownRequested:
+        print("Moderation worker stopped: received SIGTERM")
     except KeyboardInterrupt:
         print("Moderation worker stopped")
