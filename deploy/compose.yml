@@ -40,7 +40,7 @@ services:
       - ".env.backend"
       
   worker: 
-    image: ghcr.io/izeta8/kalaka_worker:0.0.1 
+    image: ghcr.io/izeta8/kalaka_worker:0.0.2
     build: ../ai
     restart: always
     env_file:
