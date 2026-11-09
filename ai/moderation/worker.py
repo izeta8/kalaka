@@ -1,4 +1,5 @@
 import signal
+import sys
 import time
 from typing import Literal
 
@@ -12,6 +13,8 @@ from database.database import (
 )
 from moderation.classifiers import (
     GEMMA_MODEL,
+    ModelNotReady,
+    check_gemma_is_ready,
     classify_gemma,
     get_labels_from_infractions,
     get_moderation_status_by_labels,
@@ -111,6 +114,12 @@ if __name__ == "__main__":
     # As PID 1 in the container, the kernel ignores SIGTERM unless there is a handler:
     # without this, `docker stop` waits 10 s and kills the worker with SIGKILL (137)
     signal.signal(signal.SIGTERM, _handle_sigterm)
+    try:
+        # Fail at startup, while someone is watching the deploy, not on the first post hours later
+        check_gemma_is_ready()
+    except ModelNotReady as e:
+        print(f"Moderation worker can't start: {e}")
+        sys.exit(1)
     try:
         run_forever()
     except ShutdownRequested:

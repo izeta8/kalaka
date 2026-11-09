@@ -9,7 +9,7 @@ from time import perf_counter
 from collections.abc import Callable
 from pydantic import BaseModel
 
-from moderation.classifiers import ClassifierSchema, LabelType, get_labels_from_infractions, classify_gemini, classify_llama, classify_gemma, classify_latxa, gemini, llama, gemma, latxa, SYSTEM_PROMPT
+from moderation.classifiers import ClassifierSchema, LabelType, get_labels_from_infractions, classify_gemini, classify_llama, classify_gemma, classify_latxa, gemini_client, llama_client, gemma_client, latxa_client, SYSTEM_PROMPT
 
 def hash_prompt(prompt: str) -> str:
     """Hash the prompt to SHA256 and get the first 8 characters"""
@@ -287,16 +287,16 @@ def main(args):
     client = None
     if model_name == "llama3.2":
         classify_function = classify_llama
-        client = llama
+        client = llama_client()
     elif model_name == "gemini-3.5-flash-lite":
         classify_function = classify_gemini
-        client = gemini
+        client = gemini_client()
     elif model_name == "gemma3:4b":
         classify_function = classify_gemma
-        client = gemma
+        client = gemma_client()
     elif model_name == "Latxa-Llama-3.1-8B-Instruct-GGUF:Q4_K_M":
         classify_function = classify_latxa
-        client = latxa
+        client = latxa_client()
     else:
         raise ValueError("No classify_function specified for model: " + model_name)
 
