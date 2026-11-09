@@ -1,8 +1,9 @@
 import os
 import json
+from functools import cache
 from typing import Final, Literal, get_args
 from pydantic import BaseModel, Field
-from openai import OpenAI
+from openai import APIError, OpenAI
 from nanoid import generate
 from dotenv import load_dotenv
 
@@ -27,33 +28,60 @@ LATXA_MODEL = os.getenv('LATXA_MODEL')
 GENERAL_TIMEOUT=180
 GENERAL_MAX_RETRIES=2
 
-gemini = OpenAI(
-    base_url=GEMINI_BASE_URL, 
-    api_key=GEMINI_API_KEY,
-    timeout=GENERAL_TIMEOUT,
-    max_retries=GENERAL_MAX_RETRIES
-)
+# The startup check must answer fast: a dead server is reported, not retried
+STARTUP_CHECK_TIMEOUT=10
 
-llama = OpenAI(
-    base_url=OLLAMA_BASE_URL, 
-    api_key=LLAMA_API_KEY,
-    timeout=GENERAL_TIMEOUT,
-    max_retries=GENERAL_MAX_RETRIES
-)
 
-gemma = OpenAI(
-    base_url=OLLAMA_BASE_URL, 
-    api_key=GEMMA_API_KEY,
-    timeout=180,
-    max_retries=GENERAL_MAX_RETRIES
-)
+class ModelNotReady(Exception):
+    """The configuration of a model is missing or its server can't serve it."""
 
-latxa = OpenAI(
-    base_url=OLLAMA_BASE_URL, 
-    api_key=LATXA_API_KEY,
-    timeout=180,
-    max_retries=GENERAL_MAX_RETRIES
-)
+
+def _require(**settings):
+    missing = [name for name, value in settings.items() if not value]
+    if missing:
+        raise ModelNotReady(f"Missing environment variables: {', '.join(missing)}")
+
+
+def _new_client(base_url, api_key) -> OpenAI:
+    return OpenAI(base_url=base_url, api_key=api_key, timeout=GENERAL_TIMEOUT, max_retries=GENERAL_MAX_RETRIES)
+
+
+# Each client is created the first time it is used and then reused (cache = one instance per model),
+# so a program only needs the settings of the models it actually calls
+@cache
+def gemini_client() -> OpenAI:
+    _require(GEMINI_API_KEY=GEMINI_API_KEY, GEMINI_BASE_URL=GEMINI_BASE_URL, GEMINI_MODEL=GEMINI_MODEL)
+    return _new_client(GEMINI_BASE_URL, GEMINI_API_KEY)
+
+@cache
+def llama_client() -> OpenAI:
+    _require(LLAMA_API_KEY=LLAMA_API_KEY, OLLAMA_BASE_URL=OLLAMA_BASE_URL, LLAMA_MODEL=LLAMA_MODEL)
+    return _new_client(OLLAMA_BASE_URL, LLAMA_API_KEY)
+
+@cache
+def gemma_client() -> OpenAI:
+    # Without OLLAMA_BASE_URL the SDK would silently default to api.openai.com
+    _require(GEMMA_API_KEY=GEMMA_API_KEY, OLLAMA_BASE_URL=OLLAMA_BASE_URL, GEMMA_MODEL=GEMMA_MODEL)
+    return _new_client(OLLAMA_BASE_URL, GEMMA_API_KEY)
+
+@cache
+def latxa_client() -> OpenAI:
+    _require(LATXA_API_KEY=LATXA_API_KEY, OLLAMA_BASE_URL=OLLAMA_BASE_URL, LATXA_MODEL=LATXA_MODEL)
+    return _new_client(OLLAMA_BASE_URL, LATXA_API_KEY)
+
+
+def check_model_is_served(client: OpenAI, model: str):
+    # Listing the models is the cheapest call: no tokens, and it also catches a misspelled model name
+    try:
+        served = [m.id for m in client.with_options(timeout=STARTUP_CHECK_TIMEOUT, max_retries=0).models.list()]
+    except APIError as e:
+        raise ModelNotReady(f"Can't reach the model server at {client.base_url}: {e}") from e
+    if model not in served:
+        raise ModelNotReady(f"Model '{model}' is not served at {client.base_url}. Served: {served}")
+
+
+def check_gemma_is_ready():
+    check_model_is_served(gemma_client(), GEMMA_MODEL)
 
 LabelType = Literal["ok", "insult", "threat", "spam", "personal_data"]
 InfractionType = Literal["insult", "threat", "spam", "personal_data"]
@@ -211,16 +239,16 @@ def classify(ai: OpenAI, model: str, post: str) -> ClassifierSchema | None:
         return None
 
 def classify_gemma(post: str):
-    return classify(gemma, GEMMA_MODEL, post)
+    return classify(gemma_client(), GEMMA_MODEL, post)
 
 def classify_gemini(post: str):
-    return classify(gemini, GEMINI_MODEL, post)
+    return classify(gemini_client(), GEMINI_MODEL, post)
 
 def classify_llama(post: str):
-    return classify(llama, LLAMA_MODEL, post)
+    return classify(llama_client(), LLAMA_MODEL, post)
 
 def classify_latxa(post: str):
-    return classify(latxa, LATXA_MODEL, post)
+    return classify(latxa_client(), LATXA_MODEL, post)
 
 def classify_zero_shot(text: str):
     print("test")
