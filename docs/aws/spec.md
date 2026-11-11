@@ -55,6 +55,8 @@ se decide cuando sepa defenderlo.
 - Familia de la instancia: por ahora general purpose; si vemos que necesita más RAM, memory
   optimized. **Provisional.**
 - Multi-AZ y el detalle de RDS: **a decidir** en la sección de RDS.
+- Cuando se ejecuta el migrate hay que decidir. Ahora mismo si tenemos dos instancias EC2
+  y ambos hacen migrate contra la misma base de datos habría problemas.
 
 ### Frontend: S3 + CloudFront
 
@@ -89,3 +91,32 @@ se decide cuando sepa defenderlo.
     conexión.
 - **Pregunta abierta:** sin salida, ¿cómo se bajan los cambios y las nuevas versiones de
   Postgres? **A revisar** en las secciones de VPC y RDS.
+
+## Almacenamiento
+
+- **Backend y worker:**: 
+  - tipo: EBS, gp3. Son aplicaciones de uso general. 
+  
+  - on terminate: Vamos a tener la politica de delete on terminate porque las instancias son stateless. 
+                  No guardamos información que queremos guardar, y si dejamos sin esta politica podriamos 
+                  estar acumulando discos y gastando de más. El contenido multimedia será guardado en buckets S3
+                  y tambien los logs (¿como se mandarian?). Los logs tambien porque asi nos da igual apagar y encender maquinas, 
+                  no tenemos que preocuparnos de sacar los logs cada vez que queramos terminar las instancias.  
+  - cifrada: Disco cifrado desde el inicio porque luego se complica cifrar y tenemos que mantener seguridad. 
+  
+  - tamaño: 12GB. Aunque para los contenedores necesitamos muy poco espacio vamos a optar por 12GB de espacio porque 
+            la diferencia con el mínimo son centimos y ganamos en comodidad. Además, podemos ampliar cuando queramos.
+  
+  - datos: se va a usar la AMI de Linux AWS 2023 con el user data que cree el directorio donde se van a bajar las imagenes,
+           que descargué git y docker si son necesarios, que baje las imagenes con manejo de secretos adecuado desde GHRC privado.
+            Con un token solo lectura del registro y si es posible solo los registros que usamos. Y que el almacen de secretos 
+            que la instancia lee con el Role.
+
+- **Base de datos:**:
+  - tipo: EBS, gp3. Para la cantidad de 1000 usuarios a la vez tenemos suficiente con un gp3, no necesitamos un io2. 
+                    Los datos caben en la RAM porque hay pocas escritouras y quedan por debajo de 3000 IOPS. 
+                    Si en CloudWatch vemos que las IOPS se acercan a 3000, los subiriamos en el gp3. 
+  
+  - cifrada: Disco cifrado desde el inicio porque luego se complica cifrar y tenemos que mantener seguridad. 
+
+  - tamaño: 20GB. Es lo minimo que nos deja para RDS. Tenemos espacio de sobra. Las opciones de RDS se veŕan más adelante.
