@@ -25,8 +25,14 @@ se decide cuando sepa defenderlo.
 ## Objetivo de escala: M
 
 - **~1000 usuarios a la vez, sin caerse si cae una AZ.**
-- Arquitectura: ALB + 2 EC2 en 2 AZ (ASG) + RDS Multi-AZ. **A decidir**: no entiendo
-  todavía estas piezas; se decide cuando sepa qué significan.
+- Arquitectura: ALB + 2 EC2 en 2 AZ (ASG) + RDS Multi-AZ.
+
+- ALB: para hostear un backend de node.js es el load balancer indicado.
+       Trabaja sobre el nivel de aplicación (OSI 7) y trae cross-zone gratis por defecto. 
+- AGS: No sé cuantas instancias voy a necesitar para 1000 usuarios. 
+       El mínimo son dos instancias repartidas en dos AZ. No sé el deseado ni el máximo. Tendríamos que probar.
+- AZ: En dos AZs para tener mayor disponibilidad. Si se cae una AZ se redirige el trafico
+      en el otro AZ y se escalan los EC2.
 
 ## Cómo se paga
 
@@ -44,7 +50,17 @@ se decide cuando sepa defenderlo.
   nuestra aplicación es pequeño y los servicios no son intensivos en recursos, para este
   tamaño tiene sentido mantener ambos servicios en una misma máquina.
 - **Consecuencia:** si se crean dos instancias de la misma máquina, tendríamos dos workers, y
-  podrían intentar moderar el mismo post.
+  podrían intentar moderar el mismo post. 
+  
+  Para solucionar esto, vamos a añadir un nuevo campo  en la tabla posts, donde se va a
+   guardar el timestamp desde que un worker ha codigo el registro para evaluarlo (o NULL). 
+  
+  Actualmente, tenemos una función que coge el post más viejo que no ha sido evaluado. 
+  Tendriamos que cambiar para que en vez de ser un SELECT, sea un UPDATE con un RETURNING donde
+  actualizase este nuevo campo. En la condicion actual que tenemos en ese SELECT (que pasaría a
+  ser UPDATE), tendriamos que añadir la condicion de mirar si el valor de este nuevo campo es NULL
+  o la diferencia con el tiempo actual de la maquina es mayor que el timeout de la IA + un margen, 
+  se coge para evaluar, si no significa que otro worker lo está evaluando y seguiriamos con el siguiente post si la hay.
 
 ### Base de datos: RDS Multi-AZ
 
@@ -54,9 +70,11 @@ se decide cuando sepa defenderlo.
   para centrarme en cosas más importantes.
 - Familia de la instancia: por ahora general purpose; si vemos que necesita más RAM, memory
   optimized. **Provisional.**
-- Multi-AZ y el detalle de RDS: **a decidir** en la sección de RDS.
-- Cuando se ejecuta el migrate hay que decidir. Ahora mismo si tenemos dos instancias EC2
-  y ambos hacen migrate contra la misma base de datos habría problemas.
+- Mas migraciones no se van a ejecutar en las instancias, se va a ejecutar en el CI.
+  El CI va a crear una instancia nueva de EC2 para la migración (una EC2 de usar y tirar).
+  Cuando se hace merge a main, primero se actualiza la base de datos y si todo ha ido bien 
+  las instancias se actualizan de version.
+- 
 
 ### Frontend: S3 + CloudFront
 
@@ -71,24 +89,27 @@ se decide cuando sepa defenderlo.
   justos de tiempo, tiene prioridad aprender para la SAA y tiraríamos de **Gemini**.
 - Modelo concreto: **a decidir**.
 
-### Reverse proxy
+### Application Load Balancer (Reverse proxy + Load balancer)
 
-- Tendremos un reverse proxy para gestionar el tráfico. El backend solo responderá al proxy,
-  no al frontend.
-- Sus reglas: **a decidir** (todavía no sé bien cómo funcionan).
+- Tendremos un ALB que funcionará como reverse proxy y balancedor de carga + DNS fijo.
+  Además el ALB tiene por defecto (y gratis) activado el cross-zone. 
+- El HTTPS termina en el ALB, y a partir de ahi, en la red interna se usará HTTP.
+- El tráfico HTTP será redirigido a HTTPS. 
+- Si el healthcheck del ALB o el de EC2 dice que la máquina no responde, quitamos la instancia
+  y creamos otra. Usaremos el método tracking, si supera un limite de CPU hace scale out y si
+  se baja de un limite se hace in scale in. Tendriamos que ver los limites en realidad.
+- El deregistration delay se va a quedar por defecto: 5 minutos.
 
 ## Security groups
 
 - **SG separados** (por ejemplo, uno para SSH y otro para el acceso a la base de datos),
   porque así puedo reutilizarlos en diferentes servicios y me es más sencillo aplicar cambios.
-- Todas las máquinas tienen reglas de SSH para que pueda entrar.
 - **Máquina de backend y worker** (una máquina con varios SG):
-  - entrada: solo desde el reverse proxy;
-  - salida: a la base de datos y a la API del modelo.
+  - entrada: Solo del SG del ALB y SSH (con Instance Connect, en el SG va el prefix list)
+  - salida: RDS, la API del modelo, GHRC (por ahora), ASM y S3
 - **Base de datos:**
-  - entrada: solo desde backend y worker;
-  - salida: solo las respuestas a las peticiones que han entrado; no puede abrir una nueva
-    conexión.
+  - entrada: la maquina de backend + worker y la maquina de las migraciones
+  - salida: no puede abrir una nueva conexión.
 - **Pregunta abierta:** sin salida, ¿cómo se bajan los cambios y las nuevas versiones de
   Postgres? **A revisar** en las secciones de VPC y RDS.
 
