@@ -70,12 +70,38 @@ se decide cuando sepa defenderlo.
   para centrarme en cosas más importantes.
 - Familia de la instancia: por ahora general purpose; si vemos que necesita más RAM, memory
   optimized. **Provisional.**
-- Mas migraciones no se van a ejecutar en las instancias, se va a ejecutar en el CI.
+- Las migraciones no se van a ejecutar en las instancias, se va a ejecutar en el CI.
   El CI va a crear una instancia nueva de EC2 para la migración (una EC2 de usar y tirar).
   Cuando se hace merge a main, primero se actualiza la base de datos y si todo ha ido bien 
   las instancias se actualizan de version.
-- 
-
+- Como vamos a tener muchas lecturas necesitamos read replicas. Cómo vamos a pagar por el disco
+  de cada replica, tenemos que calcular las metricas de la app y ajustar la cantidad de replicas
+  que necesitamos entorno a ello. Al menos una maquina en Multi-AZ para tener una maquina de
+  respaldo si se cae la AZ. 
+- Cómo no sabemos la máxima cantidad de EC2 que podemos tener, porque hemos dicho que lo vamos a decidir
+  en entorno real analizando el consuma de cada instancia y viendo si necesitamós más o menos con datos objetivos,
+  no podemos decidir si necesitariamos un **RDS proxy** para solucionar el problema de tener muchas conexiones abiertas. 
+- Las intancias EC2 (backend + worker) se conectarían a la base de datos usando **Roles IAM**, es lo que he aprendido
+  que se tiene que hacer para que dos servicios se conecten de manera segura.
+- Tenemos que distinguir las consultas que se hacen a las Read Replicas porque pueden tener restrasos en cuanto a 
+  los datos que se tienen guardados de hasta algunos segundos. Cómo tenemos una red social, cómo regla general
+  re harán peticiones a la base de datos principal si son consultas sobre el mismo usuario (datos del usuario, 
+  posts del usuario...) y se harán consultas a las replicas si son de salas. En los casos donde es una mezcla, como
+  a la hora de crear recursos la base de datos los devuelve, se pueden poblar en el frontend.
+- Empezaríamos **sin read replicas** porque al principio las lecturas no serán un cuello de botella en una app con muy
+  pocos usuarios. Sí tendremos una base principal y una copia standby (Multi-AZ) para mantener una mayor disponivilidad
+- Como la base de datos que tenemos es muy pequeña, podemos permitirnos el lujo de guardar 35 (máximo) 
+  backups. Aunque esta base de datos esté vacía, nuestra lógica de negocio y el alcance que tiene
+  la app no es muy grande, por lo que nos podemos permitir tener 35 copias. Aún así tendriamos que poner avisos 
+  de CloudWatch para monitorizar el tamaño que acumulan los backups para no pasar de la cuota gratuita.
+- En cuanto a las politicas de añadir más replicas, tendriamos que ver cúantas lecturas se están haciendo y si
+  se están saturando las replicas. Cómo nuestra aplicación tendria un uso previsible (el aumento de usuarios es
+  orgánico y no es de pico, va por fases) tendriamos tiempo para añadir nuevas replicas si son necesarios. Para 
+  refozar una buena experiencia de usuario, no podemos dejar que caigan las replicas para añadir nuevas, añadiríamos
+  alarmas de CloudWatch para saber que necesitamos añadir más (añadir replicas se hace manualmente). 
+- En cuanto al tamaño de base de datos, vamos a empezar con uno pequeño y si hay mucho CUD (sin R), y vemos que 
+  necesitamos mas RAM o CPU, escalaríamos verticalmente. Para nuestro alcance será más que suficiente.
+ 
 ### Frontend: S3 + CloudFront
 
 - Cuesta céntimos y voy a aprender a tener frontend y backend desacoplados. **Provisional**
