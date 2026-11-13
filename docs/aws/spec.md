@@ -74,10 +74,10 @@ se decide cuando sepa defenderlo.
   El CI va a crear una instancia nueva de EC2 para la migración (una EC2 de usar y tirar).
   Cuando se hace merge a main, primero se actualiza la base de datos y si todo ha ido bien 
   las instancias se actualizan de version.
-- Como vamos a tener muchas lecturas necesitamos read replicas. Cómo vamos a pagar por el disco
-  de cada replica, tenemos que calcular las metricas de la app y ajustar la cantidad de replicas
-  que necesitamos entorno a ello. Al menos una maquina en Multi-AZ para tener una maquina de
-  respaldo si se cae la AZ. 
+- Como la aplicación con muchos usuarios va a tener muchas lecturas necesitamos read replicas.
+  Cómo vamos a pagar por el disco de cada replica, tenemos que calcular las metricas
+  de la app y ajustar la cantidad de replicas que necesitamos entorno a ello. Al menos una maquina
+  en Multi-AZ para tener una maquina de respaldo si se cae la AZ. 
 - Cómo no sabemos la máxima cantidad de EC2 que podemos tener, porque hemos dicho que lo vamos a decidir
   en entorno real analizando el consuma de cada instancia y viendo si necesitamós más o menos con datos objetivos,
   no podemos decidir si necesitariamos un **RDS proxy** para solucionar el problema de tener muchas conexiones abiertas. 
