@@ -62,7 +62,18 @@ se decide cuando sepa defenderlo.
   o la diferencia con el tiempo actual de la maquina es mayor que el timeout de la IA + un margen, 
   se coge para evaluar, si no significa que otro worker lo está evaluando y seguiriamos con el siguiente post si la hay.
 
+### Auto Scaling Group
+
+- Healthcheck: Vamos a medir cuanto tarda desde el orden de inicio a tener el servicio corriendo en una instancia y vamos a 
+  establecer ese valor como el **Healthcheck Grace Period**. Además, vamos a establecer el **ELB** cómo regla de healthcheck 
+  para que quite las instancias donde el backend no está corriendo. La petición será un *GET /health* por HTTP: ({"status":"ok"})
+  Si se elimina cuando un worker está trabajando da igual porque en la siguiente ejecucción cogerá el post.    
+- Usaremos el método tracking para el escalado, si supera un limite de CPU hace scale out y si  se baja de un limite se 
+  hace in scale in. Tendriamos que ver los limites en realidad.
+
 ### Base de datos: RDS Multi-AZ
+
+#### Motor
 
 - Usamos **RDS** en vez de instalar Postgres en una EC2. Prefiero aprender un servicio que
   puedo usar en las empresas: dejas de reinventar la rueda y te quitas el lío de instalar,
@@ -70,38 +81,58 @@ se decide cuando sepa defenderlo.
   para centrarme en cosas más importantes.
 - Familia de la instancia: por ahora general purpose; si vemos que necesita más RAM, memory
   optimized. **Provisional.**
-- Las migraciones no se van a ejecutar en las instancias, se va a ejecutar en el CI.
-  El CI va a crear una instancia nueva de EC2 para la migración (una EC2 de usar y tirar).
-  Cuando se hace merge a main, primero se actualiza la base de datos y si todo ha ido bien 
-  las instancias se actualizan de version.
+- En cuanto al tamaño de base de datos, vamos a empezar con uno pequeño y si hay mucho CUD (sin R), y vemos que 
+  necesitamos mas RAM o CPU, escalaríamos verticalmente. Para nuestro alcance será más que suficiente.
+
+#### Disponibilidad
+
+- Tendremos una base principal y una copia standby (Multi-AZ) para mantener una mayor disponivilidad.
+  Al menos una maquina en Multi-AZ para tener una maquina de respaldo si se cae la AZ.
+- Como usamos RDS, el failover lo gestiona AWS internamente. Nosotros tenemos una DB standby en otra AZ y si 
+  AWS detecta que el master no responde a los healthchecks, él mismo se encarga de promocionar y actualizar el DNS (1-2mins). 
+  Aún asi, en el código deberiamos de implementar reintentos y reconexiones de pools por si hay caidas de la base de datos. 
+- Backups automáticos con **35 días de retención** (el máximo). No son 35 copias: RDS hace un snapshot
+  diario incremental y guarda los logs de transacciones, y con eso podemos volver a cualquier segundo
+  de esos 35 días (**point-in-time recovery**). Como la base de datos es muy pequeña y el alcance de la
+  app no es muy grande, nos podemos permitir la retención máxima. Aún así tendriamos que poner avisos 
+  de CloudWatch para monitorizar el tamaño que acumulan los backups para no pasar de la cuota gratuita.
+
+#### Lecturas
+
+- Empezaríamos **sin read replicas** porque al principio las lecturas no serán un cuello de botella en una app con muy
+  pocos usuarios.
 - Como la aplicación con muchos usuarios va a tener muchas lecturas necesitamos read replicas.
   Cómo vamos a pagar por el disco de cada replica, tenemos que calcular las metricas
-  de la app y ajustar la cantidad de replicas que necesitamos entorno a ello. Al menos una maquina
-  en Multi-AZ para tener una maquina de respaldo si se cae la AZ. 
-- Cómo no sabemos la máxima cantidad de EC2 que podemos tener, porque hemos dicho que lo vamos a decidir
-  en entorno real analizando el consuma de cada instancia y viendo si necesitamós más o menos con datos objetivos,
-  no podemos decidir si necesitariamos un **RDS proxy** para solucionar el problema de tener muchas conexiones abiertas. 
-- Las intancias EC2 (backend + worker) se conectarían a la base de datos usando **Roles IAM**, es lo que he aprendido
-  que se tiene que hacer para que dos servicios se conecten de manera segura.
+  de la app y ajustar la cantidad de replicas que necesitamos entorno a ello: tendriamos que ver cúantas
+  lecturas se están haciendo y si se están saturando las replicas. Cómo nuestra aplicación tendria un uso
+  previsible (el aumento de usuarios es orgánico y no es de pico, va por fases) tendriamos tiempo para añadir
+  nuevas replicas si son necesarios. Para refozar una buena experiencia de usuario, no podemos dejar que caigan
+  las replicas para añadir nuevas, añadiríamos alarmas de CloudWatch para saber que necesitamos añadir más
+  (añadir replicas se hace manualmente). 
 - Tenemos que distinguir las consultas que se hacen a las Read Replicas porque pueden tener restrasos en cuanto a 
   los datos que se tienen guardados de hasta algunos segundos. Cómo tenemos una red social, cómo regla general
   re harán peticiones a la base de datos principal si son consultas sobre el mismo usuario (datos del usuario, 
   posts del usuario...) y se harán consultas a las replicas si son de salas. En los casos donde es una mezcla, como
   a la hora de crear recursos la base de datos los devuelve, se pueden poblar en el frontend.
-- Empezaríamos **sin read replicas** porque al principio las lecturas no serán un cuello de botella en una app con muy
-  pocos usuarios. Sí tendremos una base principal y una copia standby (Multi-AZ) para mantener una mayor disponivilidad
-- Como la base de datos que tenemos es muy pequeña, podemos permitirnos el lujo de guardar 35 (máximo) 
-  backups. Aunque esta base de datos esté vacía, nuestra lógica de negocio y el alcance que tiene
-  la app no es muy grande, por lo que nos podemos permitir tener 35 copias. Aún así tendriamos que poner avisos 
-  de CloudWatch para monitorizar el tamaño que acumulan los backups para no pasar de la cuota gratuita.
-- En cuanto a las politicas de añadir más replicas, tendriamos que ver cúantas lecturas se están haciendo y si
-  se están saturando las replicas. Cómo nuestra aplicación tendria un uso previsible (el aumento de usuarios es
-  orgánico y no es de pico, va por fases) tendriamos tiempo para añadir nuevas replicas si son necesarios. Para 
-  refozar una buena experiencia de usuario, no podemos dejar que caigan las replicas para añadir nuevas, añadiríamos
-  alarmas de CloudWatch para saber que necesitamos añadir más (añadir replicas se hace manualmente). 
-- En cuanto al tamaño de base de datos, vamos a empezar con uno pequeño y si hay mucho CUD (sin R), y vemos que 
-  necesitamos mas RAM o CPU, escalaríamos verticalmente. Para nuestro alcance será más que suficiente.
- 
+
+#### Acceso y migraciones
+
+- Las intancias EC2 (backend + worker) se conectarían a la base de datos usando **Roles IAM**, es lo que he aprendido
+  que se tiene que hacer para que dos servicios se conecten de manera segura.
+- Cómo no sabemos la máxima cantidad de EC2 que podemos tener, porque hemos dicho que lo vamos a decidir
+  en entorno real analizando el consuma de cada instancia y viendo si necesitamós más o menos con datos objetivos,
+  no podemos decidir si necesitariamos un **RDS proxy** para solucionar el problema de tener muchas conexiones abiertas. 
+- Las migraciones no se van a ejecutar en las instancias, se va a ejecutar en el CI.
+  El CI va a crear una instancia nueva de EC2 para la migración (una EC2 de usar y tirar).
+  Cuando se hace merge a main, primero se actualiza la base de datos y si todo ha ido bien 
+  las instancias se actualizan de version.
+- **Consecuencia:** con un Instance Refresh, durante unos minutos conviven instancias viejas y nuevas,
+  así que el código viejo corre contra el esquema nuevo. Si una migración renombra o borra una columna,
+  las instancias viejas fallan.
+  **A decidir:** o aceptamos que toda migración sea compatible hacia atrás (patrón **expand/contract**:
+  primero se añade, se despliega, y lo viejo se quita en una migración posterior), o elegimos otra
+  forma de desplegar.
+
 ### Frontend: S3 + CloudFront
 
 - Cuesta céntimos y voy a aprender a tener frontend y backend desacoplados. **Provisional**
@@ -121,9 +152,6 @@ se decide cuando sepa defenderlo.
   Además el ALB tiene por defecto (y gratis) activado el cross-zone. 
 - El HTTPS termina en el ALB, y a partir de ahi, en la red interna se usará HTTP.
 - El tráfico HTTP será redirigido a HTTPS. 
-- Si el healthcheck del ALB o el de EC2 dice que la máquina no responde, quitamos la instancia
-  y creamos otra. Usaremos el método tracking, si supera un limite de CPU hace scale out y si
-  se baja de un limite se hace in scale in. Tendriamos que ver los limites en realidad.
 - El deregistration delay se va a quedar por defecto: 5 minutos.
 
 ## Security groups
@@ -138,6 +166,21 @@ se decide cuando sepa defenderlo.
   - salida: no puede abrir una nueva conexión.
 - **Pregunta abierta:** sin salida, ¿cómo se bajan los cambios y las nuevas versiones de
   Postgres? **A revisar** en las secciones de VPC y RDS.
+
+
+## AMI
+
+kalaka-aws-arranque-user-data-vs-ami
+kalaka-aws-origen-compose
+
+Esto se decide a lterminar la sección de los contenedores de Mareek.
+
+<!-- - Backend + worker: vamos a tener nuestra Golden AMI propia. La base será la AMI de Linux AWS 2023. 
+                     -->
+<!-- con el user data que cree el directorio donde se van a bajar las imagenes, 
+  que descargué git y docker si son necesarios, que baje las imagenes con manejo de secretos adecuado desde GHRC privado. 
+  Con un token solo lectura del registro y si es posible solo los registros que usamos. Y que el almacen de secretos 
+  que la instancia lee con el Role. -->
 
 ## Almacenamiento
 
@@ -154,10 +197,9 @@ se decide cuando sepa defenderlo.
   - tamaño: 12GB. Aunque para los contenedores necesitamos muy poco espacio vamos a optar por 12GB de espacio porque 
             la diferencia con el mínimo son centimos y ganamos en comodidad. Además, podemos ampliar cuando queramos.
   
-  - datos: se va a usar la AMI de Linux AWS 2023 con el user data que cree el directorio donde se van a bajar las imagenes,
-           que descargué git y docker si son necesarios, que baje las imagenes con manejo de secretos adecuado desde GHRC privado.
-            Con un token solo lectura del registro y si es posible solo los registros que usamos. Y que el almacen de secretos 
-            que la instancia lee con el Role.
+  - salud del worker: actualmente el healthcheck del ASG es unicamente sobre el backend. Esto es, que si el backend deja de funcionar
+                      el ASG va a eliminar la instancia y el worker estaba funcionando perfectamente. No es un problema porque
+                      otra instancia cogera el mismo post (si ya estaba trabajando sobre uno). 
 
 - **Base de datos:**:
   - tipo: EBS, gp3. Para la cantidad de 1000 usuarios a la vez tenemos suficiente con un gp3, no necesitamos un io2. 
