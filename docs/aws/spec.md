@@ -62,6 +62,11 @@ se decide cuando sepa defenderlo.
   o la diferencia con el tiempo actual de la maquina es mayor que el timeout de la IA + un margen, 
   se coge para evaluar, si no significa que otro worker lo está evaluando y seguiriamos con el siguiente post si la hay.
 
+  Cómo no conocemos aun el servicio de contenedores de AWS, no podemos decidir cual es la mejor estrategia
+  para decidir cómo vamos a hacer el healthcheck y reinicio en caso de caída del worker. 
+  Además, tendremos una alarma de CloudWatch que nos avisará cuando un post no se ha moderado en un tiempo (hay que calcularlo) 
+  Pendiente de ver CloudWatch y ECS en Maarek
+  
 ### Auto Scaling Group
 
 - Healthcheck: Vamos a medir cuanto tarda desde el orden de inicio a tener el servicio corriendo en una instancia y vamos a 
@@ -196,10 +201,6 @@ Esto se decide a lterminar la sección de los contenedores de Mareek.
   
   - tamaño: 12GB. Aunque para los contenedores necesitamos muy poco espacio vamos a optar por 12GB de espacio porque 
             la diferencia con el mínimo son centimos y ganamos en comodidad. Además, podemos ampliar cuando queramos.
-  
-  - salud del worker: actualmente el healthcheck del ASG es unicamente sobre el backend. Esto es, que si el backend deja de funcionar
-                      el ASG va a eliminar la instancia y el worker estaba funcionando perfectamente. No es un problema porque
-                      otra instancia cogera el mismo post (si ya estaba trabajando sobre uno). 
 
 - **Base de datos:**:
   - tipo: EBS, gp3. Para la cantidad de 1000 usuarios a la vez tenemos suficiente con un gp3, no necesitamos un io2. 
